@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AAAA,MAAM,CAAA;EACF,gBAAgB,EAAE,OAAO;CAK5B;;AAND,AAEI,MAFE,CAEF,eAAe,CAAA;EACX,KAAK,EAAE,GAAG;EACV,MAAM,EAAE,SAAS;CACnB",
+    "sources": [
+        "quan-tri.scss"
+    ],
+    "names": [],
+    "file": "quan-tri.css"
+}
