@@ -1,0 +1,31 @@
+.trang-quan-tri {
+  background-color: #fafafa;
+}
+
+.trang-quan-tri .quan-tri-menu {
+  height: 800px;
+  background-color: #233242;
+}
+
+.trang-quan-tri .quan-tri-menu .quan-tri-menu-item {
+  background-color: #233242;
+  color: #6a7a8c;
+}
+
+.trang-quan-tri .quan-tri-menu .quan-tri-menu-item .quan-tri-menu-item-title {
+  font-size: 23px;
+  margin-left: 5px;
+}
+
+.trang-quan-tri .quan-tri-menu .quan-tri-menu-item a {
+  margin-left: 5px;
+  color: #6a7a8c;
+  -webkit-transition: all 0.7s;
+  transition: all 0.7s;
+}
+
+.trang-quan-tri .quan-tri-menu .quan-tri-menu-item a:hover {
+  text-decoration: none;
+  color: white;
+}
+/*# sourceMappingURL=trang-quan-tri.css.map */

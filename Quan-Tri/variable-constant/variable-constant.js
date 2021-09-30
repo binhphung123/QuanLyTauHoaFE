@@ -1,0 +1,1 @@
+var localHost = "https://localhost:44305";

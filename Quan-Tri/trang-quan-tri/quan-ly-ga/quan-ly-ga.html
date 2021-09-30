@@ -1,0 +1,34 @@
+<div ng-app="quan-ly-ga">
+    <div class="quan-ly-ga">
+        <h2>Danh sách ga</h2>
+        <hr />
+        <div class="m-3">
+            <span>Lọc ga theo tỉnh</span>
+            <select ng-model="danhSachTinhTP.MaTinhThanhPho" name="tinhThanhPhos" id="tinhThanhPhos" style="width: 200px;" ng-change="onChangeTinhThanhPho()">
+                <option value="tatCa">Tỉnh/ThànhPhố</option>
+                <option ng-repeat="tinh in danhSachTinhTP"
+                    value="{{tinh.MaTinhThanhPho}}">
+                    {{tinh.TenTinhThanhPho}}
+                </option>
+            </select>
+        </div>
+        <div>
+            <table class="table text-center">
+                <thead class="bg-dark text-white">
+                    <tr>
+                        <td>Mã ga</td>
+                        <td>Tên ga</td>
+                        <td>Tỉnh/Thànhphố</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="ga in danhSachGa">
+                        <td>{{ga.MaGa}}</td>
+                        <td>{{ga.TenGa}}</td>
+                        <td>{{ga.TenThanhPhoTinh}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

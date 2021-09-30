@@ -7,9 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản trị</title>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
     <link rel="stylesheet" href="quan-tri.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+
 </head>
 
 <body class="admin">
@@ -26,13 +28,14 @@
                         placeholder="Mật khẩu" />
                 </div>
                 <div class="d-flex justify-content-between w-100">
-                    <button class="btn btn-success mt-2" ng-click="btnDangNhap()" ng-disabled="isEmpty">Đăng
-                        nhập</button>
+                    <a href="#" class="btn btn-success mt-2" ng-click="btnDangNhap()">Đăng
+                        nhập</a>
                     <p ng-show="isError" class="text-danger">Vui lòng không để trống</p>
                     <p ng-show="isSignIn" class="text-danger">{{message}}</p>
                 </div>
             </div>
         </div>
+        <ng-view></ng-view>
     </div>
 
 
@@ -45,11 +48,9 @@
 </body>
 
 <script>
-    var app = angular.module('quanTriApp', []);
-    app.controller('quanTriCrtl', function ($scope, $http) {
-
+    var app = angular.module('quanTriApp', ["ngRoute"]);
+    app.controller('quanTriCrtl', function ($scope, $http, $window) {
         $scope.isError = false;
-        $scope.isEmpty = true;
         $scope.isSignIn = false;
         //Sign in
         $scope.btnDangNhap = function () {
@@ -57,16 +58,19 @@
                 "TaiKhoan": $scope.taiKhoan,
                 "MatKhau": $scope.matKhau
             }
+            if (!$scope.taiKhoan || !$scope.matKhau) {
+                return;
+            }
             $http.post("https://localhost:44305/api/nhanvien/dangnhap", data).then(function (response) {
                 console.log(response.data)
                 if (!response.data?.Status) {
                     $scope.isSignIn = true;
                     $scope.message = response.data.Message;
                 }
+                else {
+                    $window.location.href = './trang-quan-tri/trang-quan-tri.html';
+                }
             });
-            // $http.get("https://localhost:44305/api/test").then(function (response) {
-            //     console.log(response);
-            // });
         }
 
         //Check Empty
@@ -74,11 +78,9 @@
             $scope.isSignIn = false;
             if (!$scope.taiKhoan || !$scope.matKhau) {
                 $scope.isError = true;
-                $scope.isEmpty = true;
             }
             else {
                 $scope.isError = false;
-                $scope.isEmpty = false;
             }
         }
     })

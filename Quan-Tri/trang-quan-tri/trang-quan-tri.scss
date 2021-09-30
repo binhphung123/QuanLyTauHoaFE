@@ -1,0 +1,24 @@
+.trang-quan-tri {
+    background-color: #fafafa;
+    .quan-tri-menu {
+        height: 800px;
+        background-color: #233242;
+        .quan-tri-menu-item {
+            background-color: #233242;
+            color: #6a7a8c;
+            .quan-tri-menu-item-title {
+                font-size: 23px;
+                margin-left: 5px;
+            }
+            a {
+                margin-left: 5px;
+                color: #6a7a8c;
+                transition: all 0.7s;
+                &:hover {
+                    text-decoration: none;
+                    color: white;
+                }
+            }
+        }
+    }
+}
