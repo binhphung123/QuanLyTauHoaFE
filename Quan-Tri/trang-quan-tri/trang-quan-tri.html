@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="col-md-10">
-               <ng-view></ng-view>
+                <ng-view></ng-view>
             </div>
         </div>
     </div>
@@ -63,22 +63,166 @@
 
     })
 
-    app.controller("gaCtrl", function ($scope, $http) {
-        $http.get(localHost + "/api/ga/get-all").then(function(res){
-            if(res.data?.Status){
-                console.log(res.data?.Data);
-                $scope.danhSachGa = res.data?.Data;
-            }
-        });
-        $http.get(localHost + "/api/tinhthanhpho/get-all").then(function(res){
-            if(res.data?.Status){
-                console.log(res.data?.Data);
+    app.controller("gaCtrl", function ($scope, $http, $filter) {
+
+        $scope.onGetAllGa = function () {
+            return $http.get(localHost + "/api/ga/get-all").then(function (res) {
+                if (res.data?.Status) {
+                    console.log(res.data?.Data);
+                    $scope.danhSachGa = res.data?.Data;
+                    $scope.tatCaGa = res.data?.Data;
+                    $scope.onChangeTinhThanhPho()
+                    return res.data?.Data;
+                }
+            });
+        }
+
+        $scope.onGetAllGa();
+
+        $http.get(localHost + "/api/tinhthanhpho/get-all").then(function (res) {
+            if (res.data?.Status) {
                 $scope.danhSachTinhTP = res.data?.Data;
+                $scope.newDanhSachTinhTP = res.data?.Data;
+                $scope.editDanhSachTinhTP = res.data?.Data;
             }
         });
 
-        $scope.onChangeTinhThanhPho = function(){
-            console.log($scope.MaTinhThanhPho)
+        $scope.onChangeTinhThanhPho = function () {
+            console.log($scope.tinhSelected)
+            if ($scope.tinhSelected == 0) {
+                $scope.danhSachGa = $scope.tatCaGa;
+            }
+            else {
+                $scope.danhSachGa = $scope.tatCaGa.filter(x => x.MaThanhPhoTinh == $scope.tinhSelected);
+            }
+        }
+
+        //Thêm ga
+        $scope.isError = false;
+        $scope.onChangeThemGaMoi = function () {
+            $scope.isError = false;
+            if ($scope.tenGaMoi) {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+            else {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng không để trống. ";
+            }
+        }
+
+        $scope.themGa = function () {
+            $scope.isThemGa = true;
+        }
+
+        $scope.onChangeNewTinhThanhPho = function () {
+            if (!$scope.newTinhSelected) {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng chọn tỉnh / thành phố.";
+                return;
+            }
+            else {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+        }
+
+        $scope.onThemGa = function () {
+            if ($scope.tenGaMoi) {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+            else {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng không để trống. ";
+                return;
+            }
+
+            if (!$scope.newTinhSelected) {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng chọn tỉnh / thành phố.";
+                return;
+            }
+            else {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+
+            var model = {
+                "TenGa": $scope.tenGaMoi,
+                "MaThanhPhoTinh": $scope.newTinhSelected
+            }
+
+            $http.post(localHost + "/api/ga/them-ga", model).then(function (res) {
+                console.log(res.data)
+                if (res.data?.Status) {
+                    console.log("Thêm thành công");
+                    console.log(res.data?.Data)
+                    $scope.onGetAllGa();
+                    $scope.onChangeTinhThanhPho();
+                    $scope.clearInput();
+                    alert("Thêm thành công");
+                }
+                else {
+                    $scope.errorMessage = res.data?.Message;
+                    $scope.isError = true;
+                }
+            });
+        }
+
+        $scope.onHuyGa = function () {
+            $scope.clearInput();
+        }
+
+        $scope.clearInput = function () {
+            $scope.isError = false;
+            $scope.isEmpty = true;
+            $scope.isThemGa = false;
+            $scope.tenGaMoi = "";
+            $scope.loiThemGaMoi = "";
+        }
+
+        $scope.danhSachGaEdit = [];
+
+        console.log($filter('filter')($scope.danhSachGaEdit, { 'MaGa': 27 }));
+
+        $scope.editGa = function (ga) {
+            if($scope.isEdit){
+                alert("Vui lòng lưu lại thao tác");
+                return;
+            }
+            $scope.tenGaEdit = ga.TenGa;
+            console.log("Tên ga: " + $scope.tenGaEdit)
+            $scope.isEdit = true;
+            $scope.danhSachGaEdit.push(ga.MaGa);
+            console.log(ga)
+            $scope.editTinhSelected = ga.MaThanhPhoTinh;
+            $scope.editTinhThanhPhoSeleceted = ga.MaThanhPhoTinh;
+        }
+
+        $scope.onLuuGa = function(ga){
+            var model = {
+                "TenGa": $scope.tenGaEdit,
+                "MaThanhPhoTinh": $scope.editTinhThanhPhoSeleceted
+            }
+
+            console.log("model: " + JSON.stringify(model));
+            // $http.HttpPut(localHost + '/api/ga/sua-ga')
+        }
+
+        $scope.onHuyGaEdit = function(ga){
+            var index = $scope.danhSachGaEdit.indexOf(ga.MaGa);
+            $scope.danhSachGaEdit.splice(index, 1);
+            console.log(ga)
+            $scope.isEdit = false;
+        }
+        
+        $scope.onChangeEditTinhThanhPho = function(maTinhTP){
+            $scope.editTinhThanhPhoSeleceted = maTinhTP;
+        }
+
+        $scope.onChangeEditTenGa = function(tenGaEdit){
+            $scope.tenGaEdit = tenGaEdit;
         }
     });
 
