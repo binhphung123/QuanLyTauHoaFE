@@ -62,7 +62,7 @@
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">{{ga.TenThanhPhoTinh}}</td>
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1" style="text-align: right;">
                                     <button class="btn btn-primary" ng-click="editGa(ga)">Sửa</button>
-                                    <button class="btn btn-danger">Xóa</button>
+                                    <button class="btn btn-danger" ng-click="xoaGa(ga)">Xóa</button>
                                 </td>
                             </div>
                             
@@ -79,7 +79,7 @@
                                 </select>
                             </td>
                             <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) !== -1" style="text-align: right;">
-                                <button class="btn btn-primary" ng-disabled="!tenGaEdit" ng-click="onLuuGa(ga)">Lưu</button>
+                                <button class="btn btn-success" ng-disabled="!tenGaEdit" ng-click="onLuuGa(ga)">Lưu</button>
                                 <button class="btn btn-danger" ng-click="onHuyGaEdit(ga)">Hủy</button>
                             </td>
                         </tr>
