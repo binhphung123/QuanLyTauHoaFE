@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Quản lý toa</h2>
+    <hr />
+    <button class="btn btn-primary mb-2" ng-click="onShowThemToa()">Thêm toa</button>
+    <table class="table text-center">
+        <thead class="bg-dark text-white">
+            <tr>
+                <td>Tên tàu</td>
+                <td>Tên toa</td>
+                <td>Loại toa</td>
+                <td>Số lượng ghế</td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-show="isShowThemToa">
+                <td>
+                    <select ng-model="newTau" ng-init="newTau='1'" class="form-control text-center" ng-change="onChangeNewTau()">
+                        <option ng-repeat="tau in danhSachNewTau" value="{{tau.MaTau}}"
+                            ng-selected="newTau == tau.MaTau">
+                            {{tau.TenTau}}
+                        </option>
+                    </select>
+                    <span class="text-danger" ng-show="isErrorThemToa">{{errorMessageThemToa}}</span>
+                </td>
+                <td >
+                    <input type="text" ng-model="newTenToa" class="form-control text-center" ng-maxlength="1"
+                        ng-keypress="keyPressToaTau($event)" />
+                    <span class="text-danger" ng-show="isErrorNewTenToa">{{errorMessageNewTenToa}}</span>
+                </td>
+                <td>
+                    <select ng-model="newLoaiToa" ng-init="newLoaiToa = '1'" class="form-control text-center">
+                        <option value="1">
+                            Toa nằm
+                        </option>
+                        <option value="2">
+                            Toa ngồi
+                        </option>
+                    </select>
+                </td>
+                <td style="width: 250px;">
+                    <input type="number" ng-model="newSoLuongGhe" ng-init="newSoLuongGhe = 1" class="form-control text-center" min="1" ng-change="onChangeNewSoLuongGhe()"/>
+                    <span class="text-danger" ng-show="isErrorNewSoLuongGhe">{{errorMessageNewSoLuongGhe}}</span>
+                </td>
+                <td style="text-align: right;">
+                    <button class="btn btn-success" ng-click="onThemToa()">Thêm</button>
+                    <button class="btn btn-danger" ng-click="onHuyThemToa()">Hủy</button>
+                </td>
+            </tr>
+            <tr ng-repeat="toa in danhSachToa | orderBy: 'TenToa'">
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) == -1">{{toa.TenTau}}</td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) == -1">{{toa.TenToa}}</td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) == -1">{{toa.LoaiCho == 1 ? "Toa nằm" : "Toa ngồi"}}</td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) == -1">{{toa.SoLuongGhe}}</td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) == -1" style="text-align: right;">
+                    <button class="btn btn-primary" ng-click="onShowSuaToa(toa)">Sửa</button>
+                    <button class="btn btn-danger" ng-click="onXoaToa(toa)">Xóa</button>
+                </td>
+
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) != -1">
+                    <select ng-model="editTau" class="form-control text-center" ng-change="onChangeEditTau(editTau)">
+                        <option ng-repeat="tau in danhSachNewTau" value="{{tau.MaTau}}"
+                            ng-selected="editTau == tau.MaTau">
+                            {{tau.TenTau}}
+                        </option>
+                    </select>
+                    <span class="text-danger" ng-show="isErrorEditToa">{{errorMessageEditToa}}</span>
+                </td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) != -1">
+                    <input type="text" ng-model="editTenToa" class="form-control text-center" maxlength="1" ng-change="onChangeEditTenToa(editTenToa)" />
+                    <span class="text-danger" ng-show="isErrorEditTenToa">{{errorMessageEditTenToa}}</span>
+                </td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) != -1">
+                    <select ng-model="editLoaiToa" class="form-control text-center" ng-change="onChangeEditLoaiToa(editLoaiToa)">
+                        <option value="1">
+                            Toa nằm
+                        </option>
+                        <option value="2">
+                            Toa ngồi
+                        </option>
+                    </select>
+                </td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) != -1" style="width: 250px;">
+                    <input type="number" ng-model="editSoLuongGhe" class="form-control text-center" min="1" length="1" ng-change="onChangeEditSoLuongGhe(editSoLuongGhe)"/>
+                    <span class="text-danger" ng-show="isErrorEditSoLuongGhe">{{errorMessageEditSoLuongGhe}}</span>
+                </td>
+                <td ng-show="listSuaGa.indexOf(toa.MaToa) != -1" style="text-align: right;">
+                    <button class="btn btn-success" ng-click="onLuuToa(toa)">Lưu</button>
+                    <button class="btn btn-danger" ng-click="onHuyEditToa()">Hủy</button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+
+</html>

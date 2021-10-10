@@ -38,6 +38,10 @@
                             <i class="fas fa-subway"></i>
                             <a href="#!quan-ly-chuyen">Quản lý chuyến đi</a>
                         </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#!quan-ly-toa">Quản lý toa</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -73,7 +77,12 @@
             .when("/quan-ly-chuyen", {
                 templateUrl: "quan-ly-chuyen/quan-ly-chuyen.html",
                 controller: "chuyenCtrl"
-            });
+            })
+            .when("/quan-ly-toa", {
+                templateUrl: "quan-ly-toa/quan-ly-toa.html",
+                controller: "toaCtrl"
+            })
+            ;
 
     });
     app.controller('trangQuanTriCrtl', function ($scope, $http) {
@@ -737,6 +746,198 @@
             }
         }
 
+    })
+
+    app.controller("toaCtrl", function ($scope, $http) {
+        $scope.onGetAllToa = function () {
+            $http.get(localHost + "/api/toa/get-all").then(function (res) {
+                console.log(res.data?.Data);
+                $scope.danhSachToa = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllToa();
+
+        $scope.onGetAllTau = function () {
+            $http.get(localHost + "/api/tau/get-all").then(function (res) {
+                console.log(res.data?.Data)
+                $scope.danhSachNewTau = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllTau();
+
+        $scope.keyPressToaTau = function (keyEvent) {
+            console.log(keyEvent.key)
+            $scope.newTenToa = "";
+            $scope.clearErrorMessageThemToa();
+        }
+
+        $scope.onThemToa = function () {
+
+            var isError = false;
+            if (!$scope.newTenToa) {
+                $scope.isErrorNewTenToa = true;
+                $scope.errorMessageNewTenToa = "Vui lòng nhập tên toa";
+                isError = true;
+            }
+
+            if (!$scope.newSoLuongGhe || $scope.newSoLuongGhe < 1) {
+                $scope.isErrorNewSoLuongGhe = true;
+                $scope.errorMessageNewSoLuongGhe = "Số lượng ghế không hợp lệ";
+                isError = true;
+            }
+
+            if (isError) return;
+
+            var model = {
+                "MaTau": $scope.newTau,
+                "TenToa": $scope.newTenToa,
+                "LoaiToa": $scope.newLoaiToa,
+                "SoLuongGhe": $scope.newSoLuongGhe
+            }
+
+            console.log(model)
+
+            $http.post(localHost + "/api/toa/them-toa", model).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isErrorNewTenToa = true;
+                    $scope.errorMessageNewTenToa = res.data?.Message;
+                    return;
+                }
+
+                $scope.isShowThemToa = false;
+                $scope.clearErrorMessageThemToa();
+                $scope.onGetAllToa();
+                $scope.onDefaultThemGa();
+
+                alert(res.data?.Message)
+            })
+        }
+
+        $scope.onChangeNewTau = function(){
+            $scope.clearErrorMessageThemToa();
+        }
+
+        $scope.onHuyThemToa = function () {
+            $scope.isShowThemToa = false;
+            $scope.onDefaultThemGa();
+        }
+
+        $scope.onShowThemToa = function () {
+            $scope.isShowThemToa = true;
+        }
+
+        $scope.onChangeNewSoLuongGhe = function () {
+            $scope.clearErrorMessageThemToa();
+        }
+
+        $scope.clearErrorMessageThemToa = function () {
+            $scope.isErrorNewTenToa = false;
+            $scope.errorMessageNewTenToa = "";
+            $scope.isErrorThemToa = false;
+            $scope.errorMessageThemToa = "";
+            $scope.isErrorNewSoLuongGhe = false;
+            $scope.errorMessageNewSoLuongGhe = "";
+        }
+
+        $scope.onDefaultThemGa = function () {
+            $scope.newTenToa = "";
+            $scope.newSoLuongGhe = 1;
+        }
+
+        $scope.onXoaToa = function (toa) {
+            $http.post(localHost + "/api/toa/xoa-toa" + "?id=" + toa.MaToa).then(function (res) {
+                if (!res.data?.Status) {
+                    $scope.isErrorNewTenToa = true;
+                    $scope.errorMessageNewTenToa = res.data?.Message;
+                    return;
+                }
+
+                $scope.clearErrorMessageThemToa();
+                $scope.onGetAllToa();
+
+                alert(res.data?.Message)
+            })
+        }
+
+        $scope.listSuaGa = []
+
+        $scope.onShowSuaToa = function (toa) {
+            console.log(toa)
+            $scope.listSuaGa.push(toa.MaToa)
+            $scope.editTau = toa.MaTau;
+            $scope.editTenToa = toa.TenToa;
+            $scope.editLoaiToa = '' + toa.LoaiCho;
+            $scope.editSoLuongGhe = toa.SoLuongGhe;
+
+            $scope.valueMaTau = toa.MaTau;
+            $scope.valueLoaiToa = toa.LoaiCho;
+            $scope.valueSoLuongGhe = toa.SoLuongGhe;
+            $scope.valueTenToa = toa.TenToa;
+
+        }
+
+        $scope.clearErrorEditToa = function () {
+            $scope.isErrorEditSoLuongGhe = false;
+            $scope.errorMessageEditSoLuongGhe = "";
+            $scope.isErrorEditTenToa = false;
+            $scope.errorMessageEditTenToa = "";
+        }
+
+        $scope.onChangeEditTau = function(){
+            $scope.clearErrorEditToa();
+        }
+
+        $scope.onLuuToa = function(toa){
+            console.log("Ten toa: " + $scope.editTenToa)
+            var issError = false;
+            if (!$scope.valueSoLuongGhe || $scope.valueSoLuongGhe <= 0) {
+                $scope.isErrorEditSoLuongGhe = true;
+                $scope.errorMessageEditSoLuongGhe = "Số lượng ghế không hợp lệ";
+                issError = true;
+            }
+
+            if (!$scope.valueTenToa) {
+                $scope.isErrorEditTenToa = true;
+                $scope.errorMessageEditTenToa = "Vui lòng nhập tên toa";
+                issError = true;
+            }
+
+            if (issError) return;
+
+            var model = {
+                "MaToa": toa.MaToa,
+                "TenToa": $scope.valueTenToa,
+                "MaTau": $scope.valueMaTau,
+                "LoaiToa": $scope.valueLoaiToa,
+                "SoLuongGhe": $scope.valueSoLuongGhe
+            }
+
+            console.log(model);
+            $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditLoaiToa = function(loaiToa){
+            $scope.valueLoaiToa = loaiToa;
+             $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditSoLuongGhe = function(soLuongGhe){
+            $scope.valueSoLuongGhe = soLuongGhe;
+             $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditTau = function(maTau){
+            $scope.valueMaTau = maTau;
+             $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditTenToa = function(tenToa){
+            $scope.valueTenToa = tenToa;
+            $scope.clearErrorEditToa();
+        }
     })
 </script>
 
