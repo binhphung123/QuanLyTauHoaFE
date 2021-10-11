@@ -1,0 +1,320 @@
+// Trang chủ
+
+// Trang tìm vé
+// *{
+//     padding: 0;
+//     margin: 0;
+// }
+
+body {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+#fpt_logo {
+    padding-top: 20px;
+    img {
+        width: 75px;
+        height: 48px;
+    }
+}
+
+#menu_header {
+    background-color: #0091d4;
+    nav {
+        flex: 100%;
+        ul#main_menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding-left: 13px;
+            li {
+                border-right: 1px solid #fff;
+                display: inline-block;
+                a {
+                    color: #f1f1f1;
+                    font-size: 12px;
+                    padding: 8px 16px;
+                    display: block;
+                    text-decoration: none;
+                    text-transform: uppercase;
+                    transition: all 0.5s;
+                    img {
+                        width: 20px;
+                        height: 20px;
+                    }
+                }
+            }
+            :last-child {
+                border-right: none;
+            }
+            :hover {
+                a {
+                    background-color: #0f6bb4;
+                }
+            }
+        }
+    }
+}
+
+.content_ticket_search {
+    // padding-left: 15px;
+    // padding-right: 15px;
+    .body_ticket_search {
+        background-color: #d9edf7;
+        border: 1px solid #bce8f1;
+        padding: 15px;
+        margin-bottom: 20px;
+        border-radius: 4px;
+        p {
+            color: #3a87ad;
+            margin: 0;
+            font-size: 15px;
+            line-height: 1.3;
+            font-weight: 500;
+        }
+    }
+}
+
+#wp_search {
+    border: 1px solid #337ab7;
+    border-radius: 4px;
+    .title_search {
+        background-color: #337ab7;
+        h1 {
+            color: #ffffff;
+            padding: 10px 15px;
+            font-size: 26px;
+            font-weight: 500;
+            line-height: 30px;
+            span {
+                margin-right: 15px;
+            }
+        }
+    }
+    .body_search {
+        padding: 20px 30px;
+        label {
+            font-size: 18px;
+        }
+        .list_train {
+            a {
+                color: #31708f;
+                display: inline-block;
+                background-color: #f5f5f5;
+                border: 1px solid #dddddd;
+                font-size: 14px;
+                line-height: 20px;
+                padding: 12px;
+                width: 138px;
+                height: 50px;
+                text-decoration: none;
+                margin-right: 10px;
+                span {
+                    margin-right: 5px;
+                }
+            }
+        }
+    }
+}
+
+#content_rule {
+    // padding-left: 15px;
+    // padding-right: 15px;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    .rule {
+        border: 1px solid #ccc;
+        border-radius: 7px;
+        .title_rule {
+            padding: 15px 15px;
+            background-color: #dd5600;
+            border-radius: 7px;
+            h3 {
+                color: #fff;
+                margin: 0;
+                font-size: 20px;
+            }
+        }
+        .body_rule {
+            padding: 15px;
+            color: #555;
+        }
+    }
+}
+
+#address {
+    // padding-left: 15px;
+    // padding-right: 15px;
+    margin-bottom: 30px;
+    display: block;
+    .body_address {
+        padding: 15px;
+        font-size: 14px;
+        p {
+            margin: 0;
+            text-align: center;
+        }
+        p.text-gray {
+            color: #636363;
+        }
+        p.text-red {
+            color: #af3f3f;
+        }
+    }
+    .copyright {
+        p {
+            font-size: 11px;
+            text-align: center;
+            margin: 0;
+        }
+    }
+    .notice {
+        text-align: center;
+        a {
+            img {
+                width: 150px;
+                height: 55px;
+            }
+        }
+    }
+}
+
+#banner_left {
+    flex: 247.6px;
+    background-color: #e6e6e6;
+    position: relative;
+    .adv_left {
+        position: absolute;
+        top: 0px;
+        right: 117px;
+        img {
+            position: fixed;
+        }
+    }
+}
+
+#banner_right {
+    flex: 247.6px;
+    background-color: #e6e6e6;
+    position: relative;
+    .adv_right {
+        position: absolute;
+        top: 0;
+        left: 0;
+        img {
+            position: fixed;
+        }
+    }
+}
+
+.bg-gray {
+    background-color: #e6e6e6;
+}
+
+// Trang đặt vé
+.gender {
+    width: 20%;
+    padding: 6px;
+}
+
+//Trang đăng nhập khách hàng
+#wp_form_login {
+    background-image: url("/images/background-login.jpg");
+    background-size: cover;
+    // background-position-y: -250px;
+    min-height: 450px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    #form_login {
+        max-width: 400px;
+        background-color: rgba(0, 0, 0, 0.8);
+        flex-grow: 1;
+        padding: 30px 30px 40px;
+        box-shadow: 0 0 17px 2px rgba(255, 255, 255, 0.8);
+        .form_heading {
+            font-size: 25px;
+            color: #f5f5f5;
+            text-align: center;
+            margin-bottom: 30px;
+            text-transform: uppercase;
+        }
+        .form_group {
+            border-bottom: 1px solid #fff;
+            margin-top: 15px;
+            margin-bottom: 20px;
+            position: relative;
+            i {
+                color: #fff;
+                font-size: 14px;
+                padding-top: 5px;
+                padding-right: 10px;
+            }
+            .eye {
+                position: absolute;
+                top: 0;
+                right: 0;
+                i {
+                    padding-right: 0;
+                    cursor: pointer;
+                }
+            }
+        }
+        .form_input {
+            background: transparent;
+            border: 0;
+            outline: 0;
+            color: #f5f5f5;
+            flex-grow: 1;
+        }
+        .form_input::placeholder {
+            color: #f5f5f5;
+        }
+        .form_submit_login,
+        .form_submit_register,
+        .form_submit_request,
+        .link_register,
+        .link_login {
+            background: transparent;
+            border: 1px solid #f5f5f5;
+            color: #fff;
+            width: 100%;
+            text-transform: uppercase;
+            padding: 6px 10px;
+            transition: 0.25s ease-in-out;
+            margin-top: 20px;
+        }
+        .form_submit_login:hover,
+        .link_login:hover {
+            border: 1px solid #54a0ff;
+        }
+        .link_register,
+        .link_login {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+        }
+        .link_register:hover,
+        .form_submit_register:hover {
+            border: 1px solid #fff200;
+        }
+        .form_submit_request:hover {
+            border: 1px solid #4cd137;
+        }
+        .tab_forgot_pass {
+            margin-top: 10px;
+            text-align: center;
+            .forgot_pass {
+                color: #42c8f4;
+                text-decoration: none;
+                font-size: 14px;
+            }
+            .forgot_pass:hover {
+                color: #fb0;
+            }
+        }
+    }
+}

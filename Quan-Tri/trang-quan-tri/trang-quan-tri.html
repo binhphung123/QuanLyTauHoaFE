@@ -34,7 +34,7 @@
                 </div>
             </div>
             <div class="col-md-10">
-               <ng-view></ng-view>
+                <ng-view></ng-view>
             </div>
         </div>
     </div>
@@ -64,20 +64,20 @@
     })
 
     app.controller("gaCtrl", function ($scope, $http) {
-        $http.get(localHost + "/api/ga/get-all").then(function(res){
-            if(res.data?.Status){
+        $http.get(localHost + "/api/ga/get-all").then(function (res) {
+            if (res.data?.Status) {
                 console.log(res.data?.Data);
                 $scope.danhSachGa = res.data?.Data;
             }
         });
-        $http.get(localHost + "/api/tinhthanhpho/get-all").then(function(res){
-            if(res.data?.Status){
+        $http.get(localHost + "/api/tinhthanhpho/get-all").then(function (res) {
+            if (res.data?.Status) {
                 console.log(res.data?.Data);
                 $scope.danhSachTinhTP = res.data?.Data;
             }
         });
 
-        $scope.onChangeTinhThanhPho = function(){
+        $scope.onChangeTinhThanhPho = function () {
             console.log($scope.MaTinhThanhPho)
         }
     });

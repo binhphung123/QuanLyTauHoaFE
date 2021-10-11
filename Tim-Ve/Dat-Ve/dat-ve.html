@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đặt vé</title>
+</head>
+
+<body ng-app="trangTimTuyen" ng-controller="trangTimTuyenCtrl">
+    <div class="row p-0">
+        <div class="col p-0">
+            <div id="wp_booking_ticket" class="border border-info rounded p-4">
+                <div class="heading_form text-center text-info mb-5">
+                    <h1>Thông tin đặt vé</h1>
+                </div>
+                <div class="row mb-5">
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Ga đi:</label>
+                        <span>Dĩ An</span>
+                    </div>
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Ga đến:</label>
+                        <span>Biên Hòa</span>
+                    </div>
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Ngày khởi hành:</label>
+                        <span>20/10/2021</span>
+                    </div>
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Giờ khởi hành:</label>
+                        <span>7:30</span>
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Tên tàu:</label>
+                        <span>DBH1</span>
+                    </div>
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Loại vé:</label>
+                        <span>loại vé</span>
+                    </div>
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Vé ghế nằm:</label>
+                        <input class="w-50" type="number" min="0">
+                    </div>
+                    <div class="col-3">
+                        <label class="text-secondary" for="">Vé ghế ngồi:</label>
+                        <input class="w-50" type="number" min="0">
+                    </div>
+                </div>
+                <div class="heading_form text-center text-info mb-5">
+                    <h1>Thông tin khách hàng</h1>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label for="">Họ tên</label>
+                        <input type="text" class="form-control" placeholder="Họ tên" aria-label="FullName">
+                    </div>
+                    <div class="col-6">
+                        <label for="">Ngày sinh</label>
+                        <input type="date" class="form-control" aria-label="Birthday">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col">
+                        <label class="d-block" for="">Số điện thoại</label>
+                        <input type="text" class="form-control" aria-label="PhoneNumber" placeholder="Số điện thoại">
+                    </div>
+                    <div class="col">
+                        <label for="">Mật khẩu</label>
+                        <input type="password" class="form-control" aria-label="PassWord" placeholder="Mật khẩu">
+                    </div>
+                </div>
+                <div class="row mb-5">
+                    <div class="col">
+                        <label for="">Chứng minh nhân dân</label>
+                        <input type="text" class="form-control" aria-label="CMND" placeholder="CMND">
+                    </div>
+                    <div class="col">
+                        <label class="d-block" for="">Giới tính</label>
+                        <select class="form-select gender" aria-label="Default select example">
+                            <option value="male">Nam</option>
+                            <option value="female">Nữ</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button class="btn btn-primary w-50 text-center" ng-click="btnDatVe()">Đặt vé</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
