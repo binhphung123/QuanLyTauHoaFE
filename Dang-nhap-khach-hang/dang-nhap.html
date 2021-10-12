@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đăng nhập</title>
+</head>
+
+<body>
+    <div id="wp_form_login" ng-app="dang-nhap-khach-hang">
+        <form action="" id="form_login">
+            <h1 class="form_heading">Đăng nhập</h1>
+            <div class="form_group">
+                <i class="far fa-user"></i>
+                <input type="text" class="form_input" placeholder="Số điện thoại" ng-model="soDT"
+                    ng-change="checkEmptyLogin()">
+            </div>
+            <div class="form_group">
+                <i class="fas fa-key"></i>
+                <input type="password" class="form_input see_pass" placeholder="Mật khẩu" ng-model="matKhau"
+                    ng-change="checkEmptyLogin()">
+                <div class="eye">
+                    <i class="far fa-eye"></i>
+                </div>
+            </div>
+            <p ng-show="isError" class="text-danger">Vui lòng không để trống!</p>
+            <p ng-show="isSignIn" class="text-danger">{{message}}</p>
+            <input type="submit" value="Đăng nhập" class="form_submit_login" ng-click="btnDangNhapKH()">
+            <!-- <div class="tab_forgot_pass">
+                <a class="forgot_pass" href="khoi-phuc-tai-khoan.html">Quên mật khẩu?</a>
+            </div> -->
+            <a class="link_register" href="dang-ky.html">Đăng ký</a>
+        </form>
+    </div>
+</body>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="/js/app.js"></script> -->
+
+</html>

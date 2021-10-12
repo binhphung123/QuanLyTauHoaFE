@@ -5,24 +5,385 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Trang chủ</title>
+    <!-- font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css"
+        integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA=="
+        crossorigin="anonymous" />
+    <!-- Sass: trang-chu.css -->
+    <link rel="stylesheet" href="sass/trang-chu.css">
+    <!-- Angular js -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <!-- Angular route -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <title>Trang chủ</title>
 </head>
 
-<body>
-    <div ng-app="myApp" ng-controller="myCtrl">
-        <p>Name : <input type="text" ng-model="name"></p>
-        <h1>Hello {{name}}</h1>
+<body ng-app="trangChu" >
+    <div id="wp_wrapper" class="bg-light">
+        <div id="wrapper">
+            <div id="header" class="container-fluid bg-info mb-3">
+                <div class="container">
+                    <div class="row justify-content-between">
+                        <div id="dsvn_logo">
+                            <img src="images/LOGO.png" alt="">
+                        </div>
+                        <div id="fpt_logo">
+                            <img src="images/fpt-logo.png" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="menu_header" class="container-fluid bg-info mb-3">
+                <div class="container">
+                    <nav>
+                        <ul id="main_menu">
+                            <li><a href="#/!"><i class="fas fa-home"></i></a></li>
+                            <li class="active"><a href="#!tim-ve">Tìm vé</a></li>
+                            <li><a href="">Thông tin đặt chỗ</a></li>
+                            <li><a href="">Trả vé</a></li>
+                            <li><a href="">Tra cứu vé</a></li>
+                            <li><a href="">Giờ tàu - Giá vé</a></li>
+                            <li><a href="">Khuyến mại</a></li>
+                            <li><a href="">Các quy định</a></li>
+                            <li><a href="">Liên hệ</a></li>
+                            <li><a href=""><img src="images/england-icon.png" alt=""> English</a></li>
+                            <li ng-show="!isSignIn">
+                                <a href="#!dang-nhap-khach-hang"><i class="far fa-user"></i> Đăng nhập</a>
+                            </li>
+                            <li ng-show="isSignIn">
+                                <p>{{tenKhachHang}}</p>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>
+        <div id="wp-content" class="container-fluid">
+            <div class="row">
+                <div class="col-2 p-0 bg-gray">
+                    <div id="banner_left">
+                        <div class="adv_left">
+                            <img src="images/dsvn-banner-left.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="container">
+                        <!-- content_ticket_search -->
+                        <div class="row">
+                            <div class="content_ticket_search">
+                                <div class="body_ticket_search">
+                                    <p>Theo quy định của Tổng công ty Đường sắt Việt Nam, hành khách có thông tin giấy
+                                        tờ
+                                        tùy thân trùng với thông tin trên vé điện tử mới đủ điều kiện vào ga lên tàu.
+                                    </p>
+                                    <p>Để đảm bảo quyền lợi cho hành khách, tránh mua phải vé giả, hoặc vé không đúng
+                                        với
+                                        quy định, quý khách có thể kiểm tra lại vé điện tử của mình bằng cách điền đầy
+                                        đủ
+                                        các thông tin dưới đây.</p>
+                                </div>
+                            </div>
+                        </div>
+                        <!--end content_ticket_search -->
+
+                        <!-- ng-view -->
+                        <ng-view></ng-view>
+                        <!-- end ng-view -->
+
+                        <!-- content_rule -->
+                        <div class="row">
+                            <div id="content_rule">
+                                <div class="rule">
+                                    <div class="title_rule">
+                                        <h3>Quy định đổi, trả vé từ ngày 27/5/2021 đến ngày 15/8/2021</h3>
+                                    </div>
+                                    <div class="body_rule">
+                                        <p>1. Thời gian, mức phí đổi trả vé:</p>
+                                        <p>- Đổi vé: Vé cá nhân đổi trước giờ tàu chạy 24 giờ trở lên, lệ phí là 20.000
+                                            đồng/vé;
+                                            không áp
+                                            dụng đổi vé đối với vé tập thể.</p>
+                                        <p>- Trả vé:</p>
+                                        <p>+ Vé cá nhân: Trả vé trước giờ tàu chạy từ 4 giờ đến dưới 48 giờ, lệ phí là
+                                            20%
+                                            giá
+                                            vé;
+                                            từ 48 giờ
+                                            trở lên lệ phí là 10% giá vé.</p>
+                                        <p>+ Vé tập thể: Trả vé trước giờ tàu chạy từ 24 giờ đến dưới 72 giờ, lệ phí là
+                                            30%
+                                            giá
+                                            vé;
+                                            từ 72
+                                            giờ trở lên lệ phí là 20% giá vé.</p>
+                                        <p>2. Hình thức trả vé.</p>
+                                        <p>- Khi hành khách mua vé và thanh toán online qua website bán vé của Ngành
+                                            Đường
+                                            sắt,
+                                            app
+                                            bán vé
+                                            hoặc các ứng dụng mua vé tàu hỏa của các đối tác thứ ba thì có thể trả vé
+                                            online
+                                            qua
+                                            các
+                                            website
+                                            bán vé của Ngành Đường sắt hoặc đến trực tiếp nhà ga.</p>
+                                        <p>- Khi hành khách mua vé bằng các hình thức khác, muốn đổi vé, trả vé hành
+                                            khách
+                                            đến
+                                            trực
+                                            tiếp nhà
+                                            ga kèm theo giấy tờ tùy thân bản chính của người đi tàu (hoặc người mua vé)
+                                            cho
+                                            nhân
+                                            viên đường
+                                            sắt. Đồng thời, thông tin trên thẻ đi tàu phải trùng khớp với giấy tờ tùy
+                                            thân
+                                            của
+                                            hành
+                                            khách.
+                                        </p>
+                                        <i>Trân trọng cảm ơn!.</i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end content_rule -->
+
+                        <!-- address -->
+                        <div class="row">
+                            <div class="col">
+                                <div id="address">
+                                    <div class="body_address">
+                                        <p class="text-gray">Tổng công ty Đường sắt Việt Nam. Số 118 đường Lê Duẩn,
+                                            Phường
+                                            Cửa
+                                            Nam,
+                                            Quận
+                                            Hoàn Kiếm, Thành phố Hà Nội, Việt Nam.</p>
+                                        <p class="text-gray">Điện thoại: (84-24) 39425972. Fax: (84-24) 39422866. Email:
+                                            dsvn@vr.com.vn.
+                                        </p>
+                                        <p class="text-red">Giấy chứng nhận ĐKKD số 113642 theo QĐ thành lập số
+                                            973/QĐ-TTg
+                                            ngày
+                                            25/06/2010 của Thủ tướng Chính phủ.</p>
+                                        <p class="text-red">Mã số doanh nghiệp: 0100105052, đăng ký lần đầu ngày
+                                            26/07/2010,
+                                            đăng ký
+                                            thay đổi lần 4 ngày 27/06/2014 tại Sở KHĐT Thành phố Hà Nội.</p>
+                                    </div>
+                                    <div class="copyright">
+                                        <p>
+                                            <img src="images/fptlogo.png" alt=""> Copyright by FPT Technology Solutions
+                                        </p>
+                                    </div>
+                                    <div class="notice">
+                                        <a href="">
+                                            <img src="images/logoSaleNoti.png" alt="">
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end address -->
+                    </div>
+                </div>
+                <div class="col-2 p-0 bg-gray">
+                    <div id="banner_right">
+                        <div class="adv_right">
+                            <img src="images/dsvn-banner-right.jpg" alt="">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
+        crossorigin="anonymous"></script>
+
 </body>
 
 <script>
-    var app = angular.module('myApp', []);
-    app.controller('myCtrl', function($scope, $http){
-        $http.get("https://localhost:44305/api/test").subscirbe(function(response){
-            console.log(response);
+    var app = angular.module('trangChu', ["ngRoute"]);
+    app.config(function ($routeProvider) {
+        $routeProvider
+            .when("/", {
+                templateUrl: "Tim-Ve/tim-ve.html",
+                controller: "trangTimTuyenCtrl"
+            })
+            .when("/tim-ve", {
+                templateUrl: "Tim-Ve/tim-ve.html",
+                controller: "trangTimTuyenCtrl"
+            })
+            .when("/dat-ve", {
+                templateUrl: "Tim-ve/Dat-Ve/dat-ve.html"
+            })
+            .when("/dang-nhap-khach-hang", {
+                templateUrl: "Dang-nhap-khach-hang/dang-nhap.html",
+                controller: "khachHangDangNhapCrtl"
+            });
+
+    });
+
+    function convertDate(inputFormat) {
+        function pad(s) { return (s < 10) ? '0' + s : s; }
+        var d = new Date(inputFormat)
+        return [pad(d.getMonth() + 1), pad(d.getDate()), d.getFullYear()].join('/')
+    }
+
+    // var app = angular.module('trangTimTuyen', []);
+    app.controller('trangTimTuyenCtrl', function ($scope, $http) {
+        $http.get("https://localhost:44305/api/ve/get-danh-sach-ga").then(function (response) {
+            $scope.myRouteData = response.data.Data;
+            $scope.chonTenGa = function (ga) {
+                console.log(ga);
+                $scope.isInvalidStation = false;
+                if ($scope.isChonGaDi) {
+                    // if ($scope.layTenGaDi == $scope.layTenGaDen) {
+                    //     $scope.isInvalidStation = true;
+                    // }
+                    $scope.layTenGaDi = ga.TenGa;
+                    $scope.maGaDiDaChon = ga.MaGa;
+                }
+                else {
+                    // if ($scope.layTenGaDen == $scope.layTenGaDi) {
+                    //     $scope.isInvalidStation = true;
+                    // }
+                    $scope.layTenGaDen = ga.TenGa;
+                    $scope.maGaDenDaChon = ga.MaGa;
+                }
+            }
+
         });
-    })
+
+        $scope.isChonGaDi = true;
+        $scope.chonGaDi = function () {
+            $scope.isChonGaDi = true;
+        }
+
+        $scope.chonGaDen = function () {
+            $scope.isChonGaDi = false;
+        }
+
+        //KT thông tin hành trình
+        $scope.isError = false;
+        $scope.isEmptyData = false;
+        $scope.isStation = false;
+        $scope.btnTimChuyenTau = function () {
+            var data = {
+                "MaGaDi": $scope.maGaDiDaChon,
+                "MaGaDen": $scope.maGaDenDaChon,
+                "NgayKhoiHanh": convertDate($scope.ngayKhoiHanh)
+            };
+            if (!$scope.maGaDiDaChon || !$scope.maGaDenDaChon || !(convertDate($scope.ngayKhoiHanh))) {
+                return;
+            }
+            console.log(data);
+
+            $http.post("https://localhost:44305/api/tuyen/tim-tuyen", data).then(function (response) {
+                console.log(response.data)
+                if (!response.data?.Status) {
+                    $scope.isEmptyData = true;
+                    $scope.message = response.data.Message;
+                }
+                else {
+                    $scope.isStation = true;
+                    $scope.danhSachChuyenTauVuaTim = response.data?.Data;
+                    // $scope.data.forEach(o=>o.ID=+o.ID)
+                }
+            });
+        }
+
+        //Check Empty
+        $scope.checkEmpty = function () {
+            $scope.isEmptyData = false;
+            if (!$scope.layTenGaDi || !$scope.layTenGaDen || !$scope.ngayKhoiHanh) {
+                $scope.isError = true;
+            }
+            else {
+                $scope.isError = false;
+            }
+        }
+
+        //formatDate get date/month/year
+        $scope.formatDate = function (date) {
+            var dateOut = new Date(date);
+            return dateOut;
+        };
+
+    });
+
+
+    // app.controller('trangChuCtrl', function ($scope, $rootScope) {
+
+    //     // $scope.$on('parentmethod', function (event, args) {
+    //     //     // $scope.isSignIn = args.isSignIn;
+    //     //     console.log("dang nhap: " + args)
+    //     // })
+    // });
+
+    // Khách hàng đăng nhập
+    app.controller('khachHangDangNhapCrtl', function ($scope, $http, $window, $rootScope) {
+        $scope.isError = false;
+        $scope.isSignIn = false;
+        //Sign in
+        $scope.btnDangNhapKH = function () {
+            var data = {
+                "SoDT": $scope.soDT,
+                "MatKhau": $scope.matKhau
+            }
+            if (!$scope.soDT || !$scope.matKhau) {
+                return;
+            }
+            console.log(data);
+            $http.post("https://localhost:44305/api/khachhang/dangnhap", data).then(function (response) {
+                console.log(response.data)
+                if (!response.data?.Status) {
+                    $scope.isSignIn = true; // ko hiểu
+                    $scope.message = response.data.Message;
+                }
+                else {
+                    alert(response.data?.Message);
+                    console.log(response);
+                    $scope.tenKhachHang = response.data?.Data.HoTen;
+                    console.log("TenKH: " + $scope.tenKhachHang)
+                    localStorage.setItem("SoDT", $scope.soDT)
+                    localStorage.setItem("HoTen", $scope.tenKhachHang)
+                    // $scope.SayHello = function () {
+                    //     console.log("Say hello")
+                    //     $scope.$broadcast('parentmethod', { isSignIn: "Hello" });
+                    // }
+
+                    // $scope.SayHello();
+                    $window.location.href = 'trang-chu.html';
+                }
+            });
+        }
+
+        //Check Empty Login
+        $scope.checkEmptyLogin = function () {
+            $scope.isSignIn = false;
+            if (!$scope.soDT || !$scope.matKhau) {
+                $scope.isError = true;
+            }
+            else {
+                $scope.isError = false;
+            }
+        }
+    });
+    // end khách hàng đăng nhập
 </script>
+<!-- <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+<script src="js/app.js"></script> -->
 
 </html>

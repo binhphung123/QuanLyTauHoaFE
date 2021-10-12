@@ -1,27 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tìm vé</title>
-    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+    <title>Document</title>
 </head>
-
 <body>
-    <div ng-controller="timVeCtrl">
-        <h1>Tìm vé</h1>
+    <div class="row">
+        <div class="col p-0">
+            <div id="wp_search" ng-app="trangTimTuyen">
+                <div class="title_search">
+                    <h1><span><i class="far fa-clock"></i></span>Tìm kiếm chuyến tàu</h1>
+                </div>
+                <div class="body_search">
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Ga đi</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Ga đi"
+                                ng-model="layTenGaDi" ng-focus="chonGaDi()" ng-change="checkEmpty()">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Ga đến</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="inputPassword" placeholder="Ga đến"
+                                ng-model="layTenGaDen" ng-focus="chonGaDen()" ng-change="checkEmpty()">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Ngày</label>
+                        <div class="col-sm-10">
+                            <input type="date" class="form-control" id="inputPassword" ng-model="ngayKhoiHanh"
+                                ng-change="checkEmpty()">
+                        </div>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary text-center" ng-click="btnTimChuyenTau()">Tìm
+                            kiếm</button>
+                        <span ng-show="isError" class="text-danger">Vui lòng nhập đầy đủ, chính xác thông tin hành
+                            trình!</span>
+                        <span ng-show="isEmptyData" class="text-danger">{{message}}</span>
+                        <span ng-show="isInvalidStation" class="text-danger">Ga đi và ga đến không hợp lệ!</span>
+                        <div class="list_train mt-4">
+                            <a href="" ng-repeat="x in myRouteData | orderBy:'TenGa' track by $index"
+                                ng-click="chonTenGa(x)">
+                                <span><i class="fas fa-external-link-alt"></i></span>{{x.TenGa}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <div ng-show="isStation" class="result_search">
+                    <table class="table text-center">
+                        <thead class="bg-info text-white">
+                            <tr>
+                                <td>Mã chuyến tàu</td>
+                                <td>Ga đi</td>
+                                <td>Ga đến</td>
+                                <td>Tên tàu</td>
+                                <td>Ngày khởi hành</td>
+                                <td>Giờ khởi hành</td>
+                                <td>Giá vé ngồi</td>
+                                <td>Giá vé nằm</td>
+                                <td></td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="tramGa in danhSachChuyenTauVuaTim">
+                                <td>{{tramGa.MaChuyenTau}}</td>
+                                <td>{{tramGa.GaDi}}</td>
+                                <td>{{tramGa.GaDen}}</td>
+                                <td>{{tramGa.TenTau}}</td>
+                                <td>{{formatDate(tramGa.NgayKhoiHanh) | date:'dd/MM/yyyy'}}</td>
+                                <td>{{tramGa.GioKhoiHanh}}</td>
+                                <td>{{tramGa.GiaVeNgoi | number}} VNĐ</td>
+                                <td>{{tramGa.GiaVeNam | number}} VNĐ</td>
+                                <td>
+                                    <!-- <a ng-href="#/product/{{item.id}}">More Info</a> -->
+                                    <a class="btn btn-primary" href="#!dat-ve" role="button">Chọn</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
-
-<script>
-    var app = angular.module('myApp', []);
-    app.controller('myCtrl', function($scope, $http){
-        $http.get("https://localhost:44305/api/test").subscirbe(function(response){
-            console.log(response);
-        });
-    })
-</script>
-
 </html>
