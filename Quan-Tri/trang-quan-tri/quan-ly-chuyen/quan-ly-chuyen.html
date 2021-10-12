@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h2>Danh sách chuyến đi</h2>
+    <hr />
+    <div class="m-3">
+        <span>Tìm kiếm theo ga đi: </span>
+        <select ng-model="gaDiFilterSelected" ng-init="gaDiFilterSelected = '0'" ng-change="onChangeFilterGaDi(gaDiFilterSelected)">
+            <option value="0">Tất cả ga</option>
+            <option ng-repeat="ga in danhSachGa" ng-selected="gaDiFilterSelected == ga.MaGa"
+                value="{{ga.MaGa}}">
+                {{ga.TenGa}} - ({{ga.TenThanhPhoTinh}})
+            </option>
+        </select>
+
+        <span>Tìm kiếm theo ga đến: </span>
+        <select ng-model="gaDenFilterSelected" ng-init="gaDenFilterSelected = '0'" ng-change="onChangeFilterGaDen(gaDenFilterSelected)">
+            <option value="0">Tất cả ga</option>
+            <option ng-repeat="ga in danhSachGa" ng-selected="gaDenFilterSelected == ga.MaGa"
+                value="{{ga.MaGa}}">
+                {{ga.TenGa}} - ({{ga.TenThanhPhoTinh}})
+            </option>
+        </select>
+
+        <button class="btn btn-primary mb-3" ng-click="onShowThemChuyen()">Thêm chuyến</button>
+
+        <table class="table">
+            <thead class="bg-dark text-white">
+                <tr>
+                    <td>Mã chuyến</td>
+                    <td>Tuyến</td>
+                    <td>Giờ khởi hành</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-show="isThemChuyen">
+                    <td></td>
+                    <td>
+                        <select ng-model="tuyenSelected" class="form-control"
+                            ng-change="onChangeNewTuyen(tuyenSelected)">
+                            <option ng-repeat="tuyen in danhSachTuyen" ng-selected="tuyenSelected == tuyen.MaTuyen"
+                                value="{{tuyen.MaTuyen}}">
+                                {{tuyen.TenGaDi}} - ({{tuyen.TenTinhGaDi}})
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                                ->
+                                {{tuyen.TenGaDen}} - ({{tuyen.TenTinhGaDen}})
+                            </option>
+                        </select>
+                        <p class="text-danger m-0" ng-show="isErrorTuyen">{{errorMessageTuyen}}</p>
+                    </td>
+                    <td>
+                        Giờ:
+                        <input type="number" style="width: 50px;" ng-model="gioKhoiHanh" min="0" max="23"
+                            ng-change="onChangeTime()" />
+                        Phút:
+                        <input type="number" style="width: 50px;" ng-model="phutKhoiHanh" min="0" max="59"
+                            ng-change="onChangeTime()" />
+                        <p class="text-danger" ng-show="isErrorTime">{{errorMessageTime}}</p>
+                    </td>
+                    <td style="text-align: right;">
+                        <button class="btn btn-success" ng-click="onThemChuyen()">Thêm</button>
+                        <button class="btn btn-danger" ng-click="onHuyThemChuyen()">Hủy</button>
+                    </td>
+                </tr>
+                <tr ng-repeat="chuyen in danhSachChuyen | orderBy: '-TimeOrderBy'">
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) == -1">{{chuyen.MaChuyen}}</td>
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) == -1">
+                        {{chuyen.TenGaDi}} - ({{chuyen.TinhGaDi}})
+                        <i class="fas fa-long-arrow-alt-right mr-2 ml-2"></i>
+                        {{chuyen.TenGaDen}} - ({{chuyen.TinhGaDen}})
+                    </td>
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) == -1">
+                        {{chuyen.GioKhoiHanh}}
+                    </td>
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) == -1" style="text-align: right;">
+                        <button class="btn btn-primary" ng-click="onSuaChuyen(chuyen)">Sửa</button>
+                        <button class="btn btn-danger" ng-click="onXoaChuyen(chuyen)">Xóa</button>
+                    </td>
+
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) != -1">{{chuyen.MaChuyen}}</td>
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) != -1">
+
+                        <select ng-model="tuyenEditSelected" class="form-control"
+                            ng-change="onChangeEditTuyen(tuyenEditSelected)">
+                            <option ng-repeat="tuyen in danhSachTuyenEdit"
+                                ng-selected="tuyenEditSelected == tuyen.MaTuyen" value="{{tuyen.MaTuyen}}">
+                                {{tuyen.TenGaDi}} - ({{tuyen.TenTinhGaDi}})
+                                <i class="fas fa-long-arrow-alt-right mr-2 ml-2"></i>
+                                ->
+                                {{tuyen.TenGaDen}} - ({{tuyen.TenTinhGaDen}})
+                            </option>
+                        </select>
+                        <p class="text-danger m-0" ng-show="isErrorTuyenEdit">{{errorMessageTuyenEdit}}</p>
+
+                    </td>
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) != -1">
+                        Giờ:
+                        <input type="number" style="width: 50px;" ng-model="gioKhoiHanhEdit" min="0" max="23"
+                            ng-change="onChangeGioEdit(gioKhoiHanhEdit)" />
+                        Phút:
+                        <input type="number" style="width: 50px;" ng-model="phutKhoiHanhEdit" min="0" max="59"
+                            ng-change="onChangePhutEdit(phutKhoiHanhEdit)" />
+                        <p class="text-danger" ng-show="isErrorTimeEdit">{{errorMessageTimeEdit}}</p>
+                    </td>
+                    <td ng-show="listEditChuyen.indexOf(chuyen.MaChuyen) != -1" style="text-align: right;">
+                        <button class="btn btn-success" ng-click="onLuuChuyen(chuyen)">Lưu</button>
+                        <button class="btn btn-danger" ng-click="onHuyEditChuyen(chuyen)">Hủy</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

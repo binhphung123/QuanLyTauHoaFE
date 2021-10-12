@@ -30,6 +30,18 @@
                             <i class="fas fa-subway"></i>
                             <a href="#!quan-ly-ga">Quản lý ga tàu</a>
                         </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#!quan-ly-tuyen">Quản lý tuyến tàu</a>
+                        </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#!quan-ly-chuyen">Quản lý chuyến đi</a>
+                        </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#!quan-ly-toa">Quản lý toa</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -57,31 +69,876 @@
             .when("/quan-ly-ga", {
                 templateUrl: "quan-ly-ga/quan-ly-ga.html",
                 controller: "gaCtrl"
-            });
+            })
+            .when("/quan-ly-tuyen", {
+                templateUrl: "quan-ly-tuyen/quan-ly-tuyen.html",
+                controller: "tuyenCtrl"
+            })
+            .when("/quan-ly-chuyen", {
+                templateUrl: "quan-ly-chuyen/quan-ly-chuyen.html",
+                controller: "chuyenCtrl"
+            })
+            .when("/quan-ly-toa", {
+                templateUrl: "quan-ly-toa/quan-ly-toa.html",
+                controller: "toaCtrl"
+            })
+            ;
+
     });
     app.controller('trangQuanTriCrtl', function ($scope, $http) {
 
     })
 
-    app.controller("gaCtrl", function ($scope, $http) {
-        $http.get(localHost + "/api/ga/get-all").then(function (res) {
-            if (res.data?.Status) {
-                console.log(res.data?.Data);
-                $scope.danhSachGa = res.data?.Data;
-            }
-        });
+    app.controller("gaCtrl", function ($scope, $http, $filter) {
+
+        $scope.onGetAllGa = function () {
+            return $http.get(localHost + "/api/ga/get-all").then(function (res) {
+                if (res.data?.Status) {
+                    console.log(res.data?.Data);
+                    $scope.danhSachGa = res.data?.Data;
+                    $scope.tatCaGa = res.data?.Data;
+                    $scope.onChangeTinhThanhPho()
+                    return res.data?.Data;
+                }
+            });
+        }
+
+        $scope.onGetAllGa();
+
         $http.get(localHost + "/api/tinhthanhpho/get-all").then(function (res) {
             if (res.data?.Status) {
-                console.log(res.data?.Data);
                 $scope.danhSachTinhTP = res.data?.Data;
+                $scope.newDanhSachTinhTP = res.data?.Data;
+                $scope.editDanhSachTinhTP = res.data?.Data;
             }
         });
 
         $scope.onChangeTinhThanhPho = function () {
-            console.log($scope.MaTinhThanhPho)
+            console.log($scope.tinhSelected)
+            if ($scope.tinhSelected == 0) {
+                $scope.danhSachGa = $scope.tatCaGa;
+            }
+            else {
+                $scope.danhSachGa = $scope.tatCaGa.filter(x => x.MaThanhPhoTinh == $scope.tinhSelected);
+            }
+        }
+
+        //Thêm ga
+        $scope.isError = false;
+        $scope.onChangeThemGaMoi = function () {
+            $scope.isError = false;
+            if ($scope.tenGaMoi) {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+            else {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng không để trống. ";
+            }
+        }
+
+        $scope.themGa = function () {
+            $scope.isThemGa = true;
+        }
+
+        $scope.onChangeNewTinhThanhPho = function () {
+            if (!$scope.newTinhSelected) {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng chọn tỉnh / thành phố.";
+                return;
+            }
+            else {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+        }
+
+        $scope.onThemGa = function () {
+            if ($scope.tenGaMoi) {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+            else {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng không để trống. ";
+                return;
+            }
+
+            if (!$scope.newTinhSelected) {
+                $scope.isError = true;
+                $scope.errorMessage = "Vui lòng chọn tỉnh / thành phố.";
+                return;
+            }
+            else {
+                $scope.isError = false;
+                $scope.errorMessage = "";
+            }
+
+            var model = {
+                "TenGa": $scope.tenGaMoi,
+                "MaThanhPhoTinh": $scope.newTinhSelected
+            }
+
+            $http.post(localHost + "/api/ga/them-ga", model).then(function (res) {
+                console.log(res.data)
+                if (res.data?.Status) {
+                    console.log("Thêm thành công");
+                    console.log(res.data?.Data)
+                    $scope.onGetAllGa();
+                    $scope.onChangeTinhThanhPho();
+                    $scope.clearInput();
+                    alert("Thêm thành công");
+                }
+                else {
+                    $scope.errorMessage = res.data?.Message;
+                    $scope.isError = true;
+                }
+            });
+        }
+
+        $scope.onHuyGa = function () {
+            $scope.clearInput();
+        }
+
+        $scope.clearInput = function () {
+            $scope.isError = false;
+            $scope.isEmpty = true;
+            $scope.isThemGa = false;
+            $scope.tenGaMoi = "";
+            $scope.loiThemGaMoi = "";
+        }
+
+        $scope.danhSachGaEdit = [];
+
+        console.log($filter('filter')($scope.danhSachGaEdit, { 'MaGa': 27 }));
+
+        $scope.editGa = function (ga) {
+            if ($scope.isEdit) {
+                alert("Vui lòng lưu lại thao tác");
+                return;
+            }
+            $scope.tenGaEdit = ga.TenGa;
+            console.log("Tên ga: " + $scope.tenGaEdit)
+            $scope.isEdit = true;
+            $scope.danhSachGaEdit.push(ga.MaGa);
+            console.log(ga)
+            $scope.editTinhSelected = ga.MaThanhPhoTinh;
+            $scope.editTinhThanhPhoSeleceted = ga.MaThanhPhoTinh;
+        }
+
+        $scope.onLuuGa = function (ga) {
+            var model = {
+                "MaGa": ga.MaGa,
+                "TenGa": $scope.tenGaEdit,
+                "MaThanhPhoTinh": $scope.editTinhThanhPhoSeleceted
+            }
+            console.log(ga)
+
+            console.log("model: " + JSON.stringify(model));
+            $http.post(localHost + "/api/ga/sua-ga", model).then(function (res) {
+                console.log(res.data)
+                if (res.data?.Status) {
+                    console.log(res.data?.Data)
+                    $scope.onGetAllGa();
+                    $scope.onChangeTinhThanhPho();
+                    $scope.clearInput();
+                    var index = $scope.danhSachGaEdit.indexOf(ga.MaGa);
+                    $scope.danhSachGaEdit.splice(index, 1);
+                    $scope.isEdit = false;
+
+                    alert(res.data?.Message);
+                }
+                else {
+                    $scope.errorMessage = res.data?.Message;
+                    $scope.isError = true;
+                    alert(res.data?.Message);
+                }
+            });
+        }
+
+        $scope.onHuyGaEdit = function (ga) {
+            var index = $scope.danhSachGaEdit.indexOf(ga.MaGa);
+            $scope.danhSachGaEdit.splice(index, 1);
+            console.log(ga)
+            $scope.isEdit = false;
+        }
+
+        $scope.onChangeEditTinhThanhPho = function (maTinhTP) {
+            $scope.editTinhThanhPhoSeleceted = maTinhTP;
+        }
+
+        $scope.onChangeEditTenGa = function (tenGaEdit) {
+            $scope.tenGaEdit = tenGaEdit;
+        }
+
+        $scope.xoaGa = function (ga) {
+            $http.post(localHost + "/api/ga/xoa-ga" + "?id=" + ga.MaGa).then(function (res) {
+                console.log(res.data)
+                $scope.onGetAllGa();
+                $scope.onChangeTinhThanhPho();
+                alert(res.data?.Message);
+            })
         }
     });
 
+    app.controller("tuyenCtrl", function ($scope, $http) {
+        $scope.onGetAllGa = function () {
+            $http.get(localHost + "/api/ga/get-all").then(function (res) {
+                console.log("Ga")
+                if (res.data?.Status) {
+                    $scope.danhSachGa = res.data?.Data;
+                    $scope.danhSachGaEdit = res.data?.Data;
+                }
+            });
+        }
+
+        $scope.onGetAllGa();
+
+        $scope.onGetAllTuyen = function () {
+            $http.get(localHost + "/api/tuyen/get-all").then(function (res) {
+                console.log("Tuyen")
+                console.log(res);
+                $scope.danhSachChuyen = res.data.Data;
+            });
+        }
+
+        $scope.onGetAllTuyen();
+
+        $scope.isInsertTuyen = false;
+        $scope.onShowThemTuyen = function () {
+            if ($scope.isEditTuyen) {
+                alert("Vui lòng thực hiện xong thao tác");
+                return;
+            }
+            $scope.isInsertTuyen = true;
+        }
+
+        $scope.onHuyThemTuyenMoi = function () {
+            $scope.isInsertTuyen = false;
+            $scope.gaDiSeleceted = "";
+            $scope.gaDenSeleceted = "";
+            $scope.tuyenChaSeleceted = "";
+            $scope.isErrorGaDi = false;
+            $scope.errorMessageGaDi = "";
+            $scope.isErrorGaDi = false;
+            $scope.errorMessageGaDi = "";
+        }
+
+        $scope.onThemTuyenMoi = function () {
+
+            var isAcceptInsert = true;
+            if (!$scope.gaDiSelected) {
+                $scope.isErrorGaDi = true;
+                $scope.errorMessageGaDi = "Vui lòng chọn ga đi";
+                isAcceptInsert = false;
+            }
+
+            if (!$scope.gaDenSelected) {
+                $scope.isErrorGaDi = true;
+                $scope.errorMessageGaDi = "Vui lòng chọn ga đi";
+                isAcceptInsert = false;
+            }
+
+            if ($scope.gaDenSelected && $scope.gaDenSelected && ($scope.gaDiSelected == $scope.gaDenSelected)) {
+                $scope.isErrorGaDi = true;
+                $scope.errorMessageGaDi = "Ga đi và ga đến không trùng nhau";
+                isAcceptInsert = false;
+            }
+
+            if (!isAcceptInsert) {
+                return;
+            }
+
+            var modelInsert = {
+                "MaGaDi": $scope.gaDiSelected,
+                "MaGaDen": $scope.gaDenSelected,
+                "MaTuyenCha": $scope.tuyenChaSelected
+            }
+            console.log(modelInsert);
+
+            $http.post(localHost + "/api/tuyen/them-tuyen", modelInsert).then(function (res) {
+                console.log(res)
+                if (!res.data.Status) {
+                    $scope.isErrorGaDi = true;
+                    $scope.errorMessageGaDi = res.data.Message;
+                    return;
+                }
+
+                $scope.onGetAllTuyen();
+                $scope.onHuyThemTuyenMoi();
+
+                alert(res.data.Message)
+            });
+
+        }
+
+        $scope.onChangeGa = function () {
+            $scope.clearError();
+        }
+
+        $scope.clearError = function () {
+            $scope.isErrorGaDen = false;
+            $scope.errorMessageGaDen = "";
+            $scope.isErrorGaDi = false;
+            $scope.errorMessageGaDi = "";
+        }
+
+        $scope.isEditTuyen = false;
+        $scope.listEditTuyen = [];
+
+        $scope.onClickSua = function (tuyen) {
+            if ($scope.isEditTuyen || $scope.isInsertTuyen) {
+                alert("Vui lòng thực hiện xong thao tác");
+                return;
+            }
+            console.log(tuyen)
+            $scope.isEditTuyen = true;
+            $scope.listEditTuyen.push(tuyen.MaTuyen);
+
+            $scope.gaDiEditSelected = tuyen.MaGaDi;
+            $scope.gaDenEditSelected = tuyen.MaGaDen;
+            $scope.tuyenChaSeleceted = tuyen.MaTuyenCha;
+
+            $scope.maGaDiEditSeleceted = tuyen.MaGaDi;
+            $scope.maGaDenEditSeleceted = tuyen.MaGaDen;
+            $scope.maTuyenChaEditSeleceted = tuyen.MaTuyenCha;
+        }
+
+        $scope.onHuyEdit = function (tuyen) {
+            var index = $scope.listEditTuyen.indexOf(tuyen.MaTuyen);
+            $scope.listEditTuyen.splice(index, 1);
+            $scope.isEditTuyen = false;
+
+            // $scope.onGetAllGa();
+            // $scope.onGetAllTuyen();
+            $scope.clearError();
+        }
+
+        $scope.onClickLuu = function (tuyen) {
+            console.log("MaGaDi: " + $scope.gaDiEditSelected)
+
+            var maGadi = $scope.maGaDiEditSeleceted;
+            var maGaden = $scope.maGaDenEditSeleceted;
+            var maTuyenCha = $scope.maTuyenChaEditSeleceted;
+
+            var model = {
+                "MaTuyen": tuyen.MaTuyen,
+                "MaGaDi": maGadi,
+                "MaGaDen": maGaden,
+                "MaTuyenCha": maTuyenCha
+            }
+
+            if (maGadi == maGaden) {
+                $scope.isErrorGaDi = true;
+                $scope.errorMessageGaDi = "Ga đi và ga đến không trùng nhau";
+                return;
+            }
+
+            // var tuyenChaGoc = tuyen.MaTuyenCha;
+            console.log("model: " + JSON.stringify(model))
+            // console.log("TuyenChaEdit: " + maTuyenCha)
+
+            if (maTuyenCha == tuyen.MaTuyen) {
+                $scope.isErrorGaDi = true;
+                $scope.errorMessageGaDi = "Tuyến cha không được trùng với tuyến con";
+                return;
+            }
+
+            $http.post(localHost + "/api/tuyen/sua-tuyen", model).then(function (res) {
+                console.log(res.data);
+                if (!res.data.Status) {
+                    $scope.isErrorGaDi = true;
+                    $scope.errorMessageGaDi = res.data.Message;
+                    return;
+                }
+
+                var index = $scope.listEditTuyen.indexOf(tuyen.MaTuyen);
+                $scope.listEditTuyen.splice(index, 1);
+                $scope.isEditTuyen = false;
+
+                $scope.gaDiEditSelected = maGadi;
+                $scope.gaDenEditSelected = maGaden;
+                $scope.tuyenChaSeleceted = maTuyenCha;
+
+                $scope.onGetAllTuyen();
+
+                alert(res.data.Message)
+            })
+        }
+
+        $scope.onChangeEditGaDi = function (maGa) {
+            $scope.maGaDiEditSeleceted = maGa;
+            $scope.clearError();
+        }
+
+        $scope.onChangeEditGaDen = function (maGa) {
+            $scope.maGaDenEditSeleceted = maGa;
+            $scope.clearError();
+        }
+
+        $scope.onChangeTuyenCha = function (maTuyen) {
+            $scope.maTuyenChaEditSeleceted = maTuyen;
+            $scope.clearError();
+        }
+
+        $scope.onXoaTuyen = function (tuyen) {
+            $http.post(localHost + "/api/tuyen/xoa-tuyen" + "?id=" + tuyen.MaTuyen).then(function (res) {
+                console.log(res.data);
+                if (!res.data.Status) {
+                    $scope.isErrorGaDi = true;
+                    $scope.errorMessageGaDi = res.data.Message;
+                    return;
+                }
+                $scope.onGetAllTuyen();
+                alert(res.data.Message)
+            })
+        }
+    })
+
+    app.controller("chuyenCtrl", function ($scope, $http) {
+        $scope.onGetAllChuyen = function () {
+            $http.get(localHost + "/api/chuyen/get-all").then(function (res) {
+                console.log(res)
+                $scope.danhSachChuyen = res.data?.Data;
+                $scope.allDanhSachChuyen = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllChuyen();
+
+        $scope.onGetAllTuyen = function () {
+            $http.get(localHost + "/api/tuyen/get-all").then(function (res) {
+                console.log(res)
+                $scope.danhSachTuyen = res.data?.Data;
+                $scope.danhSachTuyenEdit = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllTuyen();
+
+        $scope.onChangeGioKhoiHanh = function ($event) {
+            console.log($scope.gioKhoiHanh)
+        }
+
+        $scope.isThemChuyen = false;
+        $scope.onShowThemChuyen = function () {
+            $scope.isThemChuyen = true;
+            $scope.tuyenSelected = "";
+            $scope.gioKhoiHanh = 0;
+            $scope.phutKhoiHanh = 0;
+            $scope.themMaTuyenSelected = null;
+        }
+
+        $scope.onHuyThemChuyen = function () {
+            $scope.isThemChuyen = false;
+        }
+
+        $scope.onThemChuyen = function () {
+            if (!$scope.themMaTuyenSelected) {
+                $scope.isErrorTuyen = true;
+                $scope.errorMessageTuyen = "Vui lòng chọn tuyến";
+                return;
+            }
+            else {
+                $scope.isErrorTuyen = false;
+                $scope.errorMessageTuyen = "";
+            }
+
+            if ((!$scope.gioKhoiHanh && $scope.gioKhoiHanh != 0) || (!$scope.phutKhoiHanh && $scope.phutKhoiHanh != 0) || $scope.gioKhoiHanh < 0 || $scope.gioKhoiHanh > 23 || $scope.phutKhoiHanh < 0 || $scope.phutKhoiHanh > 59) {
+                $scope.isErrorTime = true;
+                $scope.errorMessageTime = "Giờ hoặc phút không hợp lệ";
+                return;
+            }
+            else {
+                $scope.isErrorTime = false;
+                $scope.errorMessageTime = "";
+            }
+
+            console.log("MaTuyen: " + $scope.themMaTuyenSelected);
+            var phutConvert = $scope.phutKhoiHanh < 10 ? "0" + $scope.phutKhoiHanh : $scope.phutKhoiHanh;
+            var model = {
+                "MaTuyen": $scope.themMaTuyenSelected,
+                "GioKhoiHanh": $scope.gioKhoiHanh + ":" + phutConvert
+            }
+
+            console.log(model);
+            $http.post(localHost + "/api/chuyen/them-chuyen", model).then(function (res) {
+                if (!res.data?.Status) {
+                    $scope.isErrorTuyen = true;
+                    $scope.errorMessageTuyen = res.data?.Message;
+                    return;
+                }
+
+                $scope.clearErrorChuyen();
+                $scope.onGetAllChuyen();
+                $scope.isThemChuyen = false;
+                $scope.tuyenSelected = "";
+                $scope.gioKhoiHanh = 0;
+                $scope.phutKhoiHanh = 0;
+                $scope.themMaTuyenSelected = null;
+                alert(res.data?.Message)
+            })
+        }
+
+        $scope.onChangeNewTuyen = function (tuyenSelected) {
+            $scope.themMaTuyenSelected = tuyenSelected;
+            $scope.clearErrorChuyen();
+        }
+
+        $scope.clearErrorChuyen = function () {
+            $scope.isErrorTuyen = false;
+            $scope.errorMessageTuyen = "";
+            $scope.isErrorTime = false;
+            $scope.errorMessageTime = "";
+        }
+
+        $scope.onChangeTime = function () {
+            $scope.clearErrorChuyen();
+        }
+
+        $scope.listEditChuyen = [];
+
+        $scope.onSuaChuyen = function (chuyen) {
+            if ($scope.isEditChuyen) {
+                alert("Vui lòng thực hiện xong thao tác");
+                return;
+            }
+
+            $scope.listEditChuyen.push(chuyen.MaChuyen);
+            $scope.isEditChuyen = true;
+            $scope.tuyenEditSelected = chuyen.MaTuyen;
+            $scope.maTuyenEditSeleceted = chuyen.MaTuyen;
+
+            //Get index Colon
+            var indexColon = chuyen.GioKhoiHanh.indexOf(":");
+            var gioKhoiHanhEditTemp = chuyen.GioKhoiHanh.slice(0, indexColon);
+            var phutKhoiHanhEditTemp = chuyen.GioKhoiHanh.slice(indexColon + 1);
+
+            //Post value into input time
+            $scope.gioKhoiHanhEdit = parseInt(gioKhoiHanhEditTemp);
+            $scope.phutKhoiHanhEdit = parseInt(phutKhoiHanhEditTemp);
+        }
+
+        $scope.onHuyEditChuyen = function (chuyen) {
+            var index = $scope.listEditChuyen.indexOf(chuyen.MaChuyen);
+            $scope.listEditChuyen.splice(index, 1);
+            $scope.isEditChuyen = false;
+        }
+
+        $scope.onChangeEditTuyen = function (tuyenEditSelected) {
+            $scope.maTuyenEditSeleceted = tuyenEditSelected;
+        }
+
+        $scope.onLuuChuyen = function (chuyen) {
+
+            if ((!$scope.valueGioKhoiHanh && $scope.valueGioKhoiHanh != 0) || (!$scope.valuePhutKhoiHanh && $scope.valuePhutKhoiHanh != 0) || $scope.valueGioKhoiHanh < 0
+                || $scope.valueGioKhoiHanh > 23 || $scope.valuePhutKhoiHanh < 0 || $scope.valuePhutKhoiHanh > 59) {
+                $scope.isErrorTimeEdit = true;
+                $scope.errorMessageTimeEdit = "Giờ hoặc phút không hợp lệ";
+                return;
+            }
+            else {
+                $scope.isErrorTimeEdit = false;
+                $scope.errorMessageTimeEdit = "";
+            }
+
+            var phutConvert = $scope.valuePhutKhoiHanh < 10 ? "0" + $scope.valuePhutKhoiHanh : $scope.valuePhutKhoiHanh;
+            console.log("Phut convert: " + phutConvert)
+
+            var gio = $scope.valueGioKhoiHanh;
+            console.log("Gio: " + gio)
+
+            var modelEdit = {
+                "MaChuyen": chuyen.MaChuyen,
+                "MaTuyen": $scope.maTuyenEditSeleceted,
+                "GioKhoiHanh": gio + ":" + phutConvert
+            };
+
+            console.log("Model edit: " + JSON.stringify(modelEdit))
+
+            $http.post(localHost + "/api/chuyen/sua-chuyen", modelEdit).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isErrorTuyenEdit = true;
+                    $scope.errorMessageTuyenEdit = res.data?.Message;
+                    return;
+                }
+
+                $scope.isErrorTuyenEdit = false;
+                $scope.errorMessageTuyenEdit = $scope.maTuyenEditSeleceted;
+                $scope.tuyenEditSelected = chuyen;
+
+                $scope.onHuyEditChuyen(chuyen);
+                $scope.onGetAllChuyen();
+                alert(res.data?.Message);
+            })
+        }
+        $scope.valueGioKhoiHanh = 0;
+        $scope.valuePhutKhoiHanh = 0;
+
+        $scope.onChangeGioEdit = function (gioKhoiHanh) {
+            console.log(gioKhoiHanh)
+            $scope.valueGioKhoiHanh = gioKhoiHanh;
+
+            $scope.clearErrorChuyenEdit();
+        }
+
+        $scope.onChangePhutEdit = function (phutKhoiHanh) {
+            console.log(phutKhoiHanh)
+            $scope.valuePhutKhoiHanh = phutKhoiHanh;
+
+            $scope.clearErrorChuyenEdit();
+        }
+
+        $scope.clearErrorChuyenEdit = function () {
+            $scope.isErrorTimeEdit = false;
+            $scope.errorMessageTimeEdit = "";
+            $scope.isErrorTuyenEdit = false;
+            $scope.errorMessageTuyenEdit = "";
+        }
+
+        $scope.onXoaChuyen = function (chuyen) {
+            console.log(chuyen);
+            $http.post(localHost + "/api/chuyen/xoa-chuyen" + "?id=" + chuyen.MaChuyen).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isErrorTuyenEdit = true;
+                    $scope.errorMessageTuyenEdit = res.data?.Message;
+                }
+
+                $scope.clearErrorChuyenEdit();
+                $scope.onGetAllChuyen();
+                alert(res.data?.Message);
+            })
+        }
+
+        $scope.onGetAllGa = function () {
+            $http.get(localHost + "/api/ga/get-all").then(function (res) {
+                console.log(res)
+                $scope.danhSachGa = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllGa();
+        $scope.danhSachChuyenTemp = $scope.danhSachChuyen;
+        $scope.variableFilterGa = {
+            "MaGaDi": 0,
+            "MaGaDen": 0
+        }
+
+        $scope.onChangeFilterGaDi = function (gaDiFilterSelected) {
+            $scope.variableFilterGa.MaGaDi = gaDiFilterSelected;
+            if (gaDiFilterSelected != 0) {
+                $scope.danhSachChuyen = $scope.allDanhSachChuyen.filter(x => x.MaGaDi == gaDiFilterSelected);
+            }
+            if ($scope.variableFilterGa.MaGaDen != 0) {
+                $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDen == $scope.variableFilterGa.MaGaDen);
+            }
+        }
+
+        $scope.onChangeFilterGaDen = function (gaDenFilterSelected) {
+            $scope.variableFilterGa.MaGaDen = gaDenFilterSelected;
+            if (gaDenFilterSelected != 0) {
+                $scope.danhSachChuyen = $scope.allDanhSachChuyen.filter(x => x.MaGaDen == gaDenFilterSelected);
+            }
+            if ($scope.variableFilterGa.MaGaDi != 0) {
+                $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDi == $scope.variableFilterGa.MaGaDi);
+            }
+        }
+
+    })
+
+    app.controller("toaCtrl", function ($scope, $http) {
+        $scope.onGetAllToa = function () {
+            $http.get(localHost + "/api/toa/get-all").then(function (res) {
+                console.log(res.data?.Data);
+                $scope.danhSachToa = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllToa();
+
+        $scope.onGetAllTau = function () {
+            $http.get(localHost + "/api/tau/get-all").then(function (res) {
+                console.log(res.data?.Data)
+                $scope.danhSachNewTau = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllTau();
+
+        $scope.keyPressToaTau = function (keyEvent) {
+            console.log(keyEvent.key)
+            $scope.newTenToa = "";
+            $scope.clearErrorMessageThemToa();
+        }
+
+        $scope.onThemToa = function () {
+
+            var isError = false;
+            if (!$scope.newTenToa) {
+                $scope.isErrorNewTenToa = true;
+                $scope.errorMessageNewTenToa = "Vui lòng nhập tên toa";
+                isError = true;
+            }
+
+            if (!$scope.newSoLuongGhe || $scope.newSoLuongGhe < 1) {
+                $scope.isErrorNewSoLuongGhe = true;
+                $scope.errorMessageNewSoLuongGhe = "Số lượng ghế không hợp lệ";
+                isError = true;
+            }
+
+            if (isError) return;
+
+            var model = {
+                "MaTau": $scope.newTau,
+                "TenToa": $scope.newTenToa,
+                "LoaiToa": $scope.newLoaiToa,
+                "SoLuongGhe": $scope.newSoLuongGhe
+            }
+
+            console.log(model)
+
+            $http.post(localHost + "/api/toa/them-toa", model).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isErrorNewTenToa = true;
+                    $scope.errorMessageNewTenToa = res.data?.Message;
+                    return;
+                }
+
+                $scope.isShowThemToa = false;
+                $scope.clearErrorMessageThemToa();
+                $scope.onGetAllToa();
+                $scope.onDefaultThemGa();
+
+                alert(res.data?.Message)
+            })
+        }
+
+        $scope.onChangeNewTau = function(){
+            $scope.clearErrorMessageThemToa();
+        }
+
+        $scope.onHuyThemToa = function () {
+            $scope.isShowThemToa = false;
+            $scope.onDefaultThemGa();
+        }
+
+        $scope.onShowThemToa = function () {
+            $scope.isShowThemToa = true;
+        }
+
+        $scope.onChangeNewSoLuongGhe = function () {
+            $scope.clearErrorMessageThemToa();
+        }
+
+        $scope.clearErrorMessageThemToa = function () {
+            $scope.isErrorNewTenToa = false;
+            $scope.errorMessageNewTenToa = "";
+            $scope.isErrorThemToa = false;
+            $scope.errorMessageThemToa = "";
+            $scope.isErrorNewSoLuongGhe = false;
+            $scope.errorMessageNewSoLuongGhe = "";
+        }
+
+        $scope.onDefaultThemGa = function () {
+            $scope.newTenToa = "";
+            $scope.newSoLuongGhe = 1;
+        }
+
+        $scope.onXoaToa = function (toa) {
+            $http.post(localHost + "/api/toa/xoa-toa" + "?id=" + toa.MaToa).then(function (res) {
+                if (!res.data?.Status) {
+                    $scope.isErrorNewTenToa = true;
+                    $scope.errorMessageNewTenToa = res.data?.Message;
+                    return;
+                }
+
+                $scope.clearErrorMessageThemToa();
+                $scope.onGetAllToa();
+
+                alert(res.data?.Message)
+            })
+        }
+
+        $scope.listSuaGa = []
+
+        $scope.onShowSuaToa = function (toa) {
+            console.log(toa)
+            $scope.listSuaGa.push(toa.MaToa)
+            $scope.editTau = toa.MaTau;
+            $scope.editTenToa = toa.TenToa;
+            $scope.editLoaiToa = '' + toa.LoaiCho;
+            $scope.editSoLuongGhe = toa.SoLuongGhe;
+
+            $scope.valueMaTau = toa.MaTau;
+            $scope.valueLoaiToa = toa.LoaiCho;
+            $scope.valueSoLuongGhe = toa.SoLuongGhe;
+            $scope.valueTenToa = toa.TenToa;
+
+        }
+
+        $scope.clearErrorEditToa = function () {
+            $scope.isErrorEditSoLuongGhe = false;
+            $scope.errorMessageEditSoLuongGhe = "";
+            $scope.isErrorEditTenToa = false;
+            $scope.errorMessageEditTenToa = "";
+        }
+
+        $scope.onChangeEditTau = function(){
+            $scope.clearErrorEditToa();
+        }
+
+        $scope.onLuuToa = function(toa){
+            console.log("Ten toa: " + $scope.editTenToa)
+            var issError = false;
+            if (!$scope.valueSoLuongGhe || $scope.valueSoLuongGhe <= 0) {
+                $scope.isErrorEditSoLuongGhe = true;
+                $scope.errorMessageEditSoLuongGhe = "Số lượng ghế không hợp lệ";
+                issError = true;
+            }
+
+            if (!$scope.valueTenToa) {
+                $scope.isErrorEditTenToa = true;
+                $scope.errorMessageEditTenToa = "Vui lòng nhập tên toa";
+                issError = true;
+            }
+
+            if (issError) return;
+
+            var model = {
+                "MaToa": toa.MaToa,
+                "TenToa": $scope.valueTenToa,
+                "MaTau": $scope.valueMaTau,
+                "LoaiToa": $scope.valueLoaiToa,
+                "SoLuongGhe": $scope.valueSoLuongGhe
+            }
+
+            console.log(model);
+            $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditLoaiToa = function(loaiToa){
+            $scope.valueLoaiToa = loaiToa;
+             $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditSoLuongGhe = function(soLuongGhe){
+            $scope.valueSoLuongGhe = soLuongGhe;
+             $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditTau = function(maTau){
+            $scope.valueMaTau = maTau;
+             $scope.clearErrorEditToa();
+        }
+
+        $scope.onChangeEditTenToa = function(tenToa){
+            $scope.valueTenToa = tenToa;
+            $scope.clearErrorEditToa();
+        }
+    })
 </script>
 
 </html>
