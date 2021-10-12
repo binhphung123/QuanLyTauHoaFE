@@ -50,7 +50,8 @@
                             <option ng-repeat="tuyen in danhSachTuyen" ng-selected="tuyenSelected == tuyen.MaTuyen"
                                 value="{{tuyen.MaTuyen}}">
                                 {{tuyen.TenGaDi}} - ({{tuyen.TenTinhGaDi}})
-                                <i class="fas fa-long-arrow-alt-right mr-2 ml-2"></i>
+                                <i class="fas fa-long-arrow-alt-right"></i>
+                                ->
                                 {{tuyen.TenGaDen}} - ({{tuyen.TenTinhGaDen}})
                             </option>
                         </select>
@@ -94,6 +95,7 @@
                                 ng-selected="tuyenEditSelected == tuyen.MaTuyen" value="{{tuyen.MaTuyen}}">
                                 {{tuyen.TenGaDi}} - ({{tuyen.TenTinhGaDi}})
                                 <i class="fas fa-long-arrow-alt-right mr-2 ml-2"></i>
+                                ->
                                 {{tuyen.TenGaDen}} - ({{tuyen.TenTinhGaDen}})
                             </option>
                         </select>
