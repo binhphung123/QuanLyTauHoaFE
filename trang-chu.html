@@ -290,7 +290,7 @@
             }
             console.log(data);
 
-            $http.post("https://localhost:44305/api/tuyen/timtuyen", data).then(function (response) {
+            $http.post("https://localhost:44305/api/tuyen/tim-tuyen", data).then(function (response) {
                 console.log(response.data)
                 if (!response.data?.Status) {
                     $scope.isEmptyData = true;
