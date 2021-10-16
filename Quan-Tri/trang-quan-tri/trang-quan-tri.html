@@ -939,6 +939,11 @@
             $scope.valueTenToa = tenToa;
             $scope.clearErrorEditToa();
         }
+
+        $scope.onHuyEditToa = function(toa){
+            var index = $scope.listSuaGa.indexOf(toa.MaToa)
+            $scope.listSuaGa.splice(index, 1);
+        }
     })
 </script>
 

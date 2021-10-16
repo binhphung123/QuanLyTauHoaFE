@@ -1,0 +1,89 @@
+.danh-sach-toa {
+    .danh-sach-toa-item {
+        position: relative;
+        .danh-sach-toa-item-info {
+            position: absolute;
+            top: 36px;
+            left: 38px;
+            font-size: 13px;
+        }
+        i {
+            font-size: 150px;
+        }
+    }
+
+    .danh-sach-ghe {
+        .danh-sach-ghe-ten-margin {
+            margin-right: 75px !important;
+        }
+        .danh-sach-ghe-chua-dat {
+            width: 45px;
+            height: 45px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #6c757d;
+            border-color: #6c757d;
+            border: none;
+            border-radius: 2px;
+            color: white;
+            &:hover {
+                background-color: #5a6268;
+                border-color: #545b62;
+            }
+        }
+        .danh-sach-ghe-chon{
+            width: 45px;
+            height: 45px;
+            font-size: 12px;
+            font-weight: bold;
+            border: none;
+            border-radius: 2px;
+            color: white;
+            background-color: #06ce43;
+            border-color: #06ce43;
+            &:hover {
+                background-color: #02bd3b;
+                border-color: #02bd3b;
+            }
+        }
+        .danh-sach-ghe-da-dat {
+            width: 45px;
+            height: 45px;
+            font-size: 12px;
+            font-weight: bold;
+            background-color: #ff2929;
+            border-color: #ff2929;
+            border: none;
+            border-radius: 2px;
+            color: white;
+            cursor: not-allowed;
+        }
+        .danh-sach-ghe-item {
+            position: relative;
+        }
+
+        .danh-sach-ghe-wall {
+            background: #c1c1c1;
+            padding: 35px 8px;
+            margin: 0 50px;
+            position: absolute;
+            left: 30px;
+            top: -23px;
+        }
+    }
+
+    .danh-sach-toa-dat-ve{
+        .danh-sach-toa-dat-ve-chuyen-tau{
+            width: 200px;
+            font-size: 13px;
+            p{
+                margin: 0;
+            }
+        }
+        .danh-sach-toa-dat-ve-ten-toa{
+            font-size: 13px;
+            vertical-align: middle;
+            width: 150px;
+        }
+    }
+}

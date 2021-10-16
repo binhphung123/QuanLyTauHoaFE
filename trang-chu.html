@@ -11,6 +11,7 @@
         crossorigin="anonymous" />
     <!-- Sass: trang-chu.css -->
     <link rel="stylesheet" href="sass/trang-chu.css">
+    <link rel="stylesheet" href="Tim-Ve/tim-ve.css">
     <!-- Angular js -->
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <!-- Angular route -->
@@ -21,7 +22,7 @@
     <title>Trang chủ</title>
 </head>
 
-<body ng-app="trangChu" >
+<body ng-app="trangChu">
     <div id="wp_wrapper" class="bg-light">
         <div id="wrapper">
             <div id="header" class="container-fluid bg-info mb-3">
@@ -210,6 +211,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns"
         crossorigin="anonymous"></script>
+    <script src="./Quan-Tri/variable-constant/variable-constant.js"></script>
 
 </body>
 
@@ -242,8 +244,8 @@
     }
 
     // var app = angular.module('trangTimTuyen', []);
-    app.controller('trangTimTuyenCtrl', function ($scope, $http) {
-        $http.get("https://localhost:44305/api/ve/get-danh-sach-ga").then(function (response) {
+    app.controller('trangTimTuyenCtrl', function ($scope, $http, $filter) {
+        $http.get(localHost + "/api/ve/get-danh-sach-ga").then(function (response) {
             $scope.myRouteData = response.data.Data;
             $scope.chonTenGa = function (ga) {
                 console.log(ga);
@@ -285,18 +287,21 @@
                 "MaGaDen": $scope.maGaDenDaChon,
                 "NgayKhoiHanh": convertDate($scope.ngayKhoiHanh)
             };
-            if (!$scope.maGaDiDaChon || !$scope.maGaDenDaChon || !(convertDate($scope.ngayKhoiHanh))) {
-                return;
-            }
-            console.log(data);
+            // if (!$scope.maGaDiDaChon || !$scope.maGaDenDaChon || !(convertDate($scope.ngayKhoiHanh))) {
+            //     return;
+            // }
+            // data.MaGaDi = 2;
+            // data.MaGaDen = 3;
+            // data.NgayKhoiHanh = '10/18/2021'
 
-            $http.post("https://localhost:44305/api/tuyen/tim-tuyen", data).then(function (response) {
-                console.log(response.data)
+            $http.post(localHost + "/api/tuyen/tim-tuyen", data).then(function (response) {
                 if (!response.data?.Status) {
                     $scope.isEmptyData = true;
                     $scope.message = response.data.Message;
                 }
                 else {
+                    $scope.isEmptyData = false;
+                    $scope.message = "";
                     $scope.isStation = true;
                     $scope.danhSachChuyenTauVuaTim = response.data?.Data;
                     // $scope.data.forEach(o=>o.ID=+o.ID)
@@ -321,6 +326,215 @@
             return dateOut;
         };
 
+        $scope.onSelectChuyenTau = function (chuyenTau) {
+            $scope.isSelecetedChuyenTau = true;
+            $scope.danhSachToa = chuyenTau.Toas;
+
+            $scope.chuyenTauSelectedModel = chuyenTau;
+            $scope.maChuyenTauSeleceted = chuyenTau.MaChuyenTau;
+        }
+
+        $scope.onSelectToa = function (toa) {
+            $http.get(localHost + "/api/toa/get-ghe-by-toa/" + toa.MaToa).then(function (res) {
+                if (!res.data?.Status) {
+                    alert(res.data?.Message + ". Vui lòng load lại trang");
+                    return;
+                }
+
+                $scope.danhSachGheDay0 = res.data?.Data.GheDay0;
+                $scope.danhSachGheDay1 = res.data?.Data.GheDay1;
+                $scope.danhSachGheDay2 = res.data?.Data.GheDay2;
+                $scope.danhSachGheDay3 = res.data?.Data.GheDay3;
+            })
+        }
+
+        $scope.listThongTinDatVe = [];
+        $scope.listMaGheChon = [];
+
+        $scope.onSelectGhe = function (ghe) {
+            var gheIndex = $scope.listMaGheChon.indexOf(ghe.MaGhe);
+            if (gheIndex == -1) {
+                $scope.listMaGheChon.push(ghe.MaGhe)
+                $scope.listThongTinDatVe.push({
+                    "Ghe": ghe,
+                    "HoTen": "",
+                    "SoDT": "",
+                    "CMND": "",
+                    "IsError": "",
+                    "IsCopy": false
+                })
+            }
+            else {
+                var indexMaGhe = $scope.listMaGheChon.indexOf(ghe.MaGhe);
+                var indexGheRemove = -1;
+                $scope.listThongTinDatVe.forEach((element, index) => {
+                    if(element.Ghe.MaGhe == ghe.MaGhe){
+                        indexGheRemove = index;
+                    }
+                });
+
+              
+                $scope.listMaGheChon.splice(gheIndex, 1)
+                $scope.listThongTinDatVe.splice(indexGheRemove, 1)
+                $scope.checkSoLuongVeBeHon6();
+            }
+
+            $scope.tongTien = 0;
+            $scope.listThongTinDatVe.forEach(item => {
+                $scope.tongTien += item.Ghe.GiaVe;
+            });
+        }
+
+        $scope.tongTien = 0;
+
+        $scope.onDatVe = function () {
+            var listGheDat = [];
+            var isError = false;
+            $scope.listThongTinDatVe.forEach(ghe => {
+                if (!ghe.HoTen || !ghe.SoDT || !ghe.CMND) {
+                    ghe.IsError = "Vui lòng không để trống"
+                    isError = true;
+                    return;
+                }
+                else {
+                    ghe.IsError = "";
+                }
+
+                if (('' + ghe.SoDT).length < 10 || ('' + ghe.soDT).length > 12) {
+                    ghe.IsError = "Số điện thoại không hợp lệ"
+                    isError = true;
+                    return;
+                }
+                else {
+                    ghe.IsError = "";
+                }
+
+                if (('' + ghe.CMND).length != 9 && ('' + ghe.CMND).length != 12) {
+                    ghe.IsError = "CMND/CCCD không hợp lệ"
+                    isError = true;
+                    return;
+                }
+                else {
+                    ghe.IsError = "";
+                }
+
+                var newGheDat = {
+                    "MaLoaiVe": ghe.Ghe.MaLoaiVe,
+                    "MaGhe": ghe.Ghe.MaGhe,
+                    "HoTen": ghe.HoTen,
+                    "SoDT": ghe.SoDT,
+                    "CMND": ghe.CMND
+                };
+
+                listGheDat.push(newGheDat);
+            })
+            if(!$scope.thanhToanTrucTiep && (!$scope.inputCMND || !$scope.inputMaBaoMat))
+            {
+                $scope.errorThanhToan = "Vui lòng nhập thông tin ngân hàng"
+                return;
+            }
+            else{
+                $scope.errorThanhToan = ""
+            }
+
+            if($scope.listThongTinDatVe.length <= 0){
+                alert("Vui lòng chọn ghế trước khi thanh toán")
+                return;
+            }
+
+            if(isError){
+                return;
+            }
+
+            var model = {
+                "MaChuyenTau": $scope.maChuyenTauSeleceted,
+                "LoaiVe": $scope.loaiVeCaNhan ? 1 : 2,
+                "IsTrucTiep": $scope.thanhToanTrucTiep,
+                "CMND": $scope.inputCMND,
+                "MaBaoMat": $scope.inputMaBaoMat,
+                "KhachHangGheModel": listGheDat
+            }
+
+            console.log(model)
+          
+
+            $http.post(localHost + "/api/ve/dat-ve", model).then(function(res){
+                console.log(res);
+                if(!res.data?.Status){
+                    $scope.errorThanhToan = res.data?.Message
+                    return;
+                }
+
+                alert(res.data?.Message)
+                $scope.isDatVeThanhCong = true;
+                $scope.danhSachVeThanhCong = res.data?.Data;
+            })
+        }
+
+        $scope.onCopyInfo = function (index, ghe) {
+            ghe.IsCopy = !ghe.IsCopy;
+            if (ghe.IsCopy) {
+                var gheTruoc = $scope.listThongTinDatVe[index - 1]
+                ghe.HoTen = gheTruoc.HoTen;
+                ghe.CMND = gheTruoc.CMND;
+                ghe.SoDT = gheTruoc.SoDT;
+            }
+
+            $scope.clearErrror();
+        }
+
+        $scope.clearErrror = function () {
+            $scope.listThongTinDatVe.forEach(ghe => {
+                ghe.IsError = "";
+            })
+        }
+
+        $scope.onChangeInfo = function () {
+            $scope.clearErrror();
+        }
+
+        $scope.loaiVeCaNhan = true;
+        $scope.thanhToanTrucTiep = true;
+
+        $scope.onChangeLoaiVe = function () {
+            if (!$scope.loaiVeCaNhan && $scope.listThongTinDatVe.length < 6) {
+                alert("Chỉ áp dụng khi số lượng vé hơn 5")
+                $scope.loaiVeCaNhan = true;
+                return;
+            }
+        }
+
+        $scope.checkSoLuongVeBeHon6 = function () {
+            if ($scope.listThongTinDatVe.length < 6) {
+                $scope.loaiVeCaNhan = true;
+            };
+        }
+
+        $scope.onHuyChonGhe = function (ghe) {
+            var gheIndex = $scope.listMaGheChon.indexOf(ghe.MaGhe);
+            var indexGheRemove = -1;
+                $scope.listThongTinDatVe.forEach((element, index) => {
+                    if(element.Ghe.MaGhe == ghe.MaGhe){
+                        indexGheRemove = index;
+                    }
+                });
+            var indexItem = $scope.listThongTinDatVe.indexOf(ghe)
+            $scope.listMaGheChon.splice(gheIndex, 1)
+            $scope.listThongTinDatVe.splice(indexGheRemove, 1)
+            $scope.tongTien = 0;
+            $scope.listThongTinDatVe.forEach(item => {
+                $scope.tongTien += item.Ghe.GiaVe;
+            });
+
+            $scope.checkSoLuongVeBeHon6();
+        }
+
+        $scope.onSelectPhuongThucTT = function(){
+            if($scope.thanhToanTrucTiep){
+                $scope.inputCMND = "";
+                $scope.inputMaBaoMat = "";
+            }
+        }
     });
 
 
@@ -346,7 +560,7 @@
                 return;
             }
             console.log(data);
-            $http.post("https://localhost:44305/api/khachhang/dangnhap", data).then(function (response) {
+            $http.post(localHost + "/api/khachhang/dangnhap", data).then(function (response) {
                 console.log(response.data)
                 if (!response.data?.Status) {
                     $scope.isSignIn = true; // ko hiểu
