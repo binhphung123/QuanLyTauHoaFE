@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tra cứu thông tin đặt vé ADMIN</title>
+</head>
+
+<body>
+    <div class="row">
+        <div class="col p-0">
+            <div id="wp_search" ng-app="trangTimKiemThongTinDatVe">
+                <div class="title_search">
+                    <h1><span><i class="fas fa-search"></i></span>Tra cứu thông tin đặt vé ADMIN</h1>
+                </div>
+                <div class="body_search">
+                    <div class="mb-3 row">
+                        <span class="ml-3">Để hiển thị các vé cần trả, vui lòng điền chính xác 3 thông tin dưới đây
+                            :</span>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="maSoVe" class="col-sm-2 col-form-label">Mã số vé <span
+                                style="color: red;">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="maSoVe" placeholder="Mã số vé khi đặt vé"
+                                ng-model="soVe" ng-change="checkEmptyTicket()">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="cmnd" class="col-sm-2 col-form-label">CMND / CCCD <span
+                                style="color: red;">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="cmnd"
+                                placeholder="CMND khi đặt vé, để trống nếu không nhập khi đặt vé" ng-model="cmnd"
+                                ng-change="checkEmptyTicket()">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="soDienThoai" class="col-sm-2 col-form-label">Số điện thoại <span
+                                style="color: red;">*</span></label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="soDienThoai"
+                                placeholder="Số điện thoại khi đặt vé, để trống nếu không nhập khi đặt vé"
+                                ng-model="sdt" ng-change="checkEmptyTicket()">
+                        </div>
+                    </div>
+                    <div class="text-center mb-3">
+                        <span ng-show="isError" class="text-danger">Vui lòng nhập đầy đủ các thông tin ở trên!</span>
+                        <span ng-show="isEmptyData" class="text-danger">{{message}}</span>
+                    </div>
+                    <div class="text-center">
+                        <button class="btn btn-primary text-center" ng-click="btnTraCuuThongTinVe()">Tra cứu</button>
+                    </div>
+                </div>
+                <div ng-show="isTicket" class="result_search">
+                    <table class="table text-center">
+                        <thead style="color: #000; background-color: #eee;">
+                            <tr>
+                                <th class="border border-2">Họ tên</th>
+                                <th class="border border-2">CMND</th>
+                                <th class="border border-2">Loại chỗ</th>
+                                <th class="border border-2">Thông tin vé</th>
+                                <th class="border border-2">Thành tiền</th>
+                                <th class="border border-2" ng-show="hienThiTrangThai">Trạng thái vé</th>
+                                <th class="border border-2" ng-show="isTraVe"></th>
+                                <!-- <th class="border border-2" ng-show="isThanhToan">Mã bảo mật</th> -->
+                                <th class="border border-2" ng-show="isThanhToan"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="border border-2"
+                                style="background-color: #dbedf7; color: #0082c0; font-weight: 600;">
+                                <td colspan="6" class="text-left">
+                                    {{veTraCuu.GaDi}} -> {{veTraCuu.GaDen}} - {{formatDate(veTraCuu.NgayKhoiHanh) |
+                                    date:'dd/MM/yyyy'}} - {{veTraCuu.GioKhoiHanh}}
+                                </td>
+                            </tr>
+                            <tr style="color: #555;">
+                                <td class="border border-2">{{veTraCuu.HoTen}}</td>
+                                <td class="border border-2">{{veTraCuu.CMND}}</td>
+                                <td class="border border-2">{{veTraCuu.LoaiVe}}</td>
+                                <td class="border border-2">
+                                    <p class="mb-0 font-weight-bold">{{veTraCuu.TenTau}}</p>
+                                    <p class="mb-0">
+                                        Toa: <span class="font-weight-bold">{{veTraCuu.TenToa}}</span>
+                                        chỗ số: <span class="font-weight-bold">{{veTraCuu.TenGhe}}</span>
+                                    </p>
+                                </td>
+                                <td class="border border-2">{{veTraCuu.GiaVe | number}} VNĐ</td>
+                                <td class="border border-2" ng-show="hienThiTrangThai">
+                                    <button ng-show="veTraCuu.TrangThaiVe == 2" class="btn btn-success"
+                                        ng-click="onThanhToan()">Thanh
+                                        toán</button>
+                                    <button ng-show="veTraCuu.TrangThaiVe == 1" class="btn btn-primary"
+                                        ng-click="onTraVe()">Trả vé</button>
+                                    <p ng-show="veTraCuu.TrangThaiVe == 3" class="text-danger">Đã hủy</p>
+                                </td>
+                                <td class="border border-2" ng-show="isTraVe">
+                                    <div class="d-flex">
+                                        <button class="btn btn-success mr-1" ng-click="onXacNhanTraVe(veTraCuu)">Xác
+                                            nhận</button>
+                                        <button class="btn btn-danger ml-1" ng-click="onHuyTraVe()">Hủy</button>
+                                    </div>
+                                </td>
+                                <td class="border border-2" ng-show="isThanhToan">
+                                    <div class="d-flex">
+                                        <button class="btn btn-success mr-1"
+                                            ng-click="onXacNhanThanhToan(veTraCuu)">Đồng ý</button>
+                                        <button class="btn btn-danger ml-1" ng-click="onHuyThanhToan()">Hủy</button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p ng-show="isSuccessTraVe" class="text-success text-center">{{successTraVe}}</p>
+                    <p ng-show="isSuccessThanhToan" class="text-success text-center">{{successThanhToan}}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -21,7 +21,7 @@
     <title>Trang chủ</title>
 </head>
 
-<body ng-app="trangChu" >
+<body ng-app="trangChu">
     <div id="wp_wrapper" class="bg-light">
         <div id="wrapper">
             <div id="header" class="container-fluid bg-info mb-3">
@@ -42,8 +42,8 @@
                         <ul id="main_menu">
                             <li><a href="#/!"><i class="fas fa-home"></i></a></li>
                             <li class="active"><a href="#!tim-ve">Tìm vé</a></li>
-                            <li><a href="">Thông tin đặt chỗ</a></li>
-                            <li><a href="">Trả vé</a></li>
+                            <li><a href="#!thong-tin-dat-ve">Thông tin đặt vé</a></li>
+                            <li><a href="#!tra-ve">Trả vé</a></li>
                             <li><a href="">Tra cứu vé</a></li>
                             <li><a href="">Giờ tàu - Giá vé</a></li>
                             <li><a href="">Khuyến mại</a></li>
@@ -218,8 +218,7 @@
     app.config(function ($routeProvider) {
         $routeProvider
             .when("/", {
-                templateUrl: "Tim-Ve/tim-ve.html",
-                controller: "trangTimTuyenCtrl"
+                templateUrl: "Trang-chu/trang-chu-view.html"
             })
             .when("/tim-ve", {
                 templateUrl: "Tim-Ve/tim-ve.html",
@@ -228,6 +227,14 @@
             .when("/dat-ve", {
                 templateUrl: "Tim-ve/Dat-Ve/dat-ve.html"
             })
+            .when("/thong-tin-dat-ve", {
+                templateUrl: "Thong-tin-dat-ve/thong-tin-dat-ve.html",
+                controller: "trangTimKiemThongTinDatVeCtrl"
+            })
+            .when("/tra-ve", {
+                templateUrl: "Tra-ve/tra-ve.html",
+                controller: "trangTimKiemThongTinDatVeAdminCtrl"
+            })
             .when("/dang-nhap-khach-hang", {
                 templateUrl: "Dang-nhap-khach-hang/dang-nhap.html",
                 controller: "khachHangDangNhapCrtl"
@@ -235,30 +242,28 @@
 
     });
 
+
+    //=============Tìm kiếm thông tin Chuyến tàu======================
+
     function convertDate(inputFormat) {
         function pad(s) { return (s < 10) ? '0' + s : s; }
         var d = new Date(inputFormat)
         return [pad(d.getMonth() + 1), pad(d.getDate()), d.getFullYear()].join('/')
     }
 
-    // var app = angular.module('trangTimTuyen', []);
     app.controller('trangTimTuyenCtrl', function ($scope, $http) {
         $http.get("https://localhost:44305/api/ve/get-danh-sach-ga").then(function (response) {
             $scope.myRouteData = response.data.Data;
             $scope.chonTenGa = function (ga) {
                 console.log(ga);
-                $scope.isInvalidStation = false;
+
                 if ($scope.isChonGaDi) {
-                    // if ($scope.layTenGaDi == $scope.layTenGaDen) {
-                    //     $scope.isInvalidStation = true;
-                    // }
+
                     $scope.layTenGaDi = ga.TenGa;
                     $scope.maGaDiDaChon = ga.MaGa;
                 }
                 else {
-                    // if ($scope.layTenGaDen == $scope.layTenGaDi) {
-                    //     $scope.isInvalidStation = true;
-                    // }
+
                     $scope.layTenGaDen = ga.TenGa;
                     $scope.maGaDenDaChon = ga.MaGa;
                 }
@@ -276,10 +281,12 @@
         }
 
         //KT thông tin hành trình
-        $scope.isError = false;
-        $scope.isEmptyData = false;
-        $scope.isStation = false;
+
         $scope.btnTimChuyenTau = function () {
+            $scope.isError = false;
+            $scope.isEmptyData = false;
+            $scope.isStation = false;
+            $scope.isErrorStation = false;
             var data = {
                 "MaGaDi": $scope.maGaDiDaChon,
                 "MaGaDen": $scope.maGaDenDaChon,
@@ -288,15 +295,24 @@
             if (!$scope.maGaDiDaChon || !$scope.maGaDenDaChon || !(convertDate($scope.ngayKhoiHanh))) {
                 return;
             }
+
+            if ($scope.maGaDiDaChon && $scope.maGaDenDaChon && ($scope.maGaDiDaChon == $scope.maGaDenDaChon)) {
+                $scope.isErrorStation = true;
+                $scope.errorStation = "Ga đi và ga đến không trùng nhau!";
+                return;
+            }
+
             console.log(data);
 
             $http.post("https://localhost:44305/api/tuyen/tim-tuyen", data).then(function (response) {
                 console.log(response.data)
                 if (!response.data?.Status) {
+                    $scope.isStation = false;
                     $scope.isEmptyData = true;
                     $scope.message = response.data.Message;
                 }
                 else {
+                    $scope.isEmptyData = false;
                     $scope.isStation = true;
                     $scope.danhSachChuyenTauVuaTim = response.data?.Data;
                     // $scope.data.forEach(o=>o.ID=+o.ID)
@@ -304,7 +320,7 @@
             });
         }
 
-        //Check Empty
+        //Kiểm tra người dùng chưa nhập đủ thông tin Tìm kiếm chuyến tàu
         $scope.checkEmpty = function () {
             $scope.isEmptyData = false;
             if (!$scope.layTenGaDi || !$scope.layTenGaDen || !$scope.ngayKhoiHanh) {
@@ -315,15 +331,137 @@
             }
         }
 
-        //formatDate get date/month/year
-        $scope.formatDate = function (date) {
-            var dateOut = new Date(date);
-            return dateOut;
-        };
-
     });
 
 
+    //=============Tìm kiếm thông tin đặt vé (thanh toán, trả vé trực tuyến)======================
+    app.controller('trangTimKiemThongTinDatVeCtrl', function ($scope, $http) {
+        $scope.btnTraCuuThongTinVe = function () {
+            $scope.isTicket = false;
+            $scope.isErrorTraVe = false;
+            $scope.isSuccessTraVe = false;
+            $scope.isEmptyData = false;
+            $scope.isErrorThanhToan = false;
+            $scope.isSuccessThanhToan = false;
+            var data = {
+                "SoVe": $scope.soVe,
+                "CMND": $scope.cmnd,
+                "SoDT": $scope.sdt
+            };
+            if (!$scope.soVe || !$scope.cmnd || !$scope.sdt) {
+                return;
+            }
+            console.log(data);
+
+            $http.post("https://localhost:44305/api/timkiemthongtinvedat/timkiemve", data).then(function (response) {
+                console.log(response.data)
+                if (!response.data?.Status) {
+                    $scope.isEmptyData = true;
+                    $scope.message = response.data.Message;
+                }
+                else {
+                    $scope.isEmptyData = false;
+                    $scope.isTicket = true;
+                    $scope.veTraCuu = response.data?.Data;
+                }
+            });
+        }
+
+        //Kiểm tra người dùng chưa nhập đủ thông tin Tìm kiếm thông tin đặt vé
+        $scope.checkEmptyTicket = function () {
+            $scope.isEmptyData = false;
+            if (!$scope.soVe || !$scope.cmnd || !$scope.sdt) {
+                $scope.isError = true;
+            }
+            else {
+                $scope.isError = false;
+            }
+        }
+
+        //Chức năng trả vé
+        $scope.isTraVe = false;
+        $scope.hienThiTrangThai = true;
+
+        $scope.onTraVe = function () {
+            $scope.isTraVe = true;
+            $scope.hienThiTrangThai = false;
+        }
+        $scope.onHuyTraVe = function () {
+            $scope.isTraVe = false;
+            $scope.isErrorTraVe = false;
+            $scope.hienThiTrangThai = true;
+        }
+        $scope.onXacNhanTraVe = function (veTraCuu) {
+            var model = {
+                "MaVe": veTraCuu.SoVe,
+                "CMND": veTraCuu.CMND,
+                "MaBaoMat": $scope.maBaoMat
+            }
+
+            console.log(model);
+            $http.post("https://localhost:44305/api/ve/tra-ve", model).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isSuccessTraVe = false;
+                    $scope.isErrorTraVe = true;
+                    $scope.errorTraVe = res.data.Message;
+                } else {
+                    $scope.hienThiTrangThai = true;
+                    $scope.isErrorTraVe = false;
+                    $scope.btnTraCuuThongTinVe();
+                    $scope.isTraVe = false;
+                    $scope.maBaoMat = "";
+                    $scope.isSuccessTraVe = true;
+                    $scope.successTraVe = res.data?.Message;
+                }
+            })
+        }
+        //END Chức năng trả vé
+
+        //Chức năng thanh toán
+        $scope.isThanhToan = false;
+        $scope.hienThiTrangThai = true;
+        $scope.onThanhToan = function () {
+            $scope.isThanhToan = true;
+            $scope.hienThiTrangThai = false;
+        }
+        $scope.onHuyThanhToan = function () {
+            $scope.isThanhToan = false;
+            $scope.isErrorThanhToan = false;
+            $scope.hienThiTrangThai = true;
+        }
+        $scope.onXacNhanThanhToan = function (veTraCuu) {
+            var model = {
+                "MaVe": veTraCuu.SoVe,
+                "CMND": $scope.inputCMND,
+                "MaBaoMat": $scope.maBaoMat
+            }
+
+            console.log(model);
+            $http.post("https://localhost:44305/api/ve/thanh-toan", model).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isSuccessThanhToan = false;
+                    $scope.isErrorThanhToan = true;
+                    $scope.errorThanhToan = res.data.Message;
+                } else {
+                    $scope.hienThiTrangThai = true;
+                    $scope.isErrorThanhToan = false;
+                    $scope.btnTraCuuThongTinVe();
+                    $scope.isThanhToan = false;
+                    $scope.inputCMND = "";
+                    $scope.maBaoMat = "";
+                    $scope.isSuccessThanhToan = true;
+                    $scope.successThanhToan = res.data?.Message;
+                }
+            })
+        }
+        //END Chức năng thanh toán
+
+    });
+    //========End tìm kiếm thông tin đặt vé==============
+
+    //===========Khách hàng đăng nhập====================
     // app.controller('trangChuCtrl', function ($scope, $rootScope) {
 
     //     // $scope.$on('parentmethod', function (event, args) {
@@ -332,7 +470,6 @@
     //     // })
     // });
 
-    // Khách hàng đăng nhập
     app.controller('khachHangDangNhapCrtl', function ($scope, $http, $window, $rootScope) {
         $scope.isError = false;
         $scope.isSignIn = false;
@@ -382,6 +519,132 @@
         }
     });
     // end khách hàng đăng nhập
+
+
+
+    //==================CỦA ADMIN======================
+
+    //=============Tìm kiếm thông tin đặt vé (thanh toán, trả vé ADMIN)======================
+    // app.controller('trangTimKiemThongTinDatVeAdminCtrl', function ($scope, $http) {
+    //     $scope.btnTraCuuThongTinVe = function () {
+    //         $scope.isTicket = false;
+    //         $scope.isSuccessTraVe = false;
+    //         $scope.isEmptyData = false;
+    //         $scope.isSuccessThanhToan = false;
+    //         var data = {
+    //             "SoVe": $scope.soVe,
+    //             "CMND": $scope.cmnd,
+    //             "SoDT": $scope.sdt
+    //         };
+    //         if (!$scope.soVe || !$scope.cmnd || !$scope.sdt) {
+    //             return;
+    //         }
+    //         console.log(data);
+
+    //         $http.post("https://localhost:44305/api/timkiemthongtinvedat/timkiemve", data).then(function (response) {
+    //             console.log(response.data)
+    //             if (!response.data?.Status) {
+    //                 $scope.isEmptyData = true;
+    //                 $scope.message = response.data.Message;
+    //             }
+    //             else {
+    //                 $scope.isEmptyData = false;
+    //                 $scope.isTicket = true;
+    //                 $scope.veTraCuu = response.data?.Data;
+    //             }
+    //         });
+    //     }
+
+    //     //Kiểm tra ADMIN chưa nhập đủ thông tin Tìm kiếm đặt vé
+    //     $scope.checkEmptyTicket = function () {
+    //         $scope.isEmptyData = false;
+    //         if (!$scope.soVe || !$scope.cmnd || !$scope.sdt) {
+    //             $scope.isError = true;
+    //         }
+    //         else {
+    //             $scope.isError = false;
+    //         }
+    //     }
+
+    //     //Chức năng trả vé
+    //     $scope.isTraVe = false;
+    //     $scope.hienThiTrangThai = true;
+
+    //     $scope.onTraVe = function () {
+    //         $scope.isTraVe = true;
+    //         $scope.hienThiTrangThai = false;
+    //     }
+    //     $scope.onHuyTraVe = function () {
+    //         $scope.isTraVe = false;
+    //         $scope.hienThiTrangThai = true;
+    //     }
+    //     $scope.onXacNhanTraVe = function (veTraCuu) {
+    //         var model = {
+    //             "MaVe": veTraCuu.SoVe,
+    //             "CMND": veTraCuu.CMND
+    //         }
+
+    //         console.log(model);
+    //         $http.post("https://localhost:44305/api/ve/tra-ve-admin", model).then(function (res) {
+    //             console.log(res);
+    //             if (!res.data?.Status) {
+    //                 $scope.isSuccessTraVe = false;
+    //                 $scope.errorTraVe = res.data.Message;
+    //             } else {
+    //                 $scope.hienThiTrangThai = true;
+    //                 $scope.btnTraCuuThongTinVe();
+    //                 $scope.isTraVe = false;
+    //                 $scope.isSuccessTraVe = true;
+    //                 $scope.successTraVe = res.data?.Message;
+    //             }
+    //         })
+    //     }
+    //     //END Chức năng trả vé
+
+    //     //Chức năng thanh toán
+    //     $scope.isThanhToan = false;
+    //     $scope.hienThiTrangThai = true;
+    //     $scope.onThanhToan = function () {
+    //         $scope.isThanhToan = true;
+    //         $scope.hienThiTrangThai = false;
+    //     }
+    //     $scope.onHuyThanhToan = function () {
+    //         $scope.isThanhToan = false;
+    //         $scope.hienThiTrangThai = true;
+    //     }
+    //     $scope.onXacNhanThanhToan = function (veTraCuu) {
+    //         var model = {
+    //             "MaVe": veTraCuu.SoVe,
+    //             "CMND": veTraCuu.CMND
+    //         }
+
+    //         console.log(model);
+    //         $http.post("https://localhost:44305/api/ve/thanh-toan-admin", model).then(function (res) {
+    //             console.log(res);
+    //             if (!res.data?.Status) {
+    //                 $scope.isSuccessThanhToan = false;
+    //                 $scope.errorThanhToan = res.data.Message;
+    //             } else {
+    //                 $scope.hienThiTrangThai = true;
+    //                 $scope.btnTraCuuThongTinVe();
+    //                 $scope.isThanhToan = false;
+    //                 $scope.isSuccessThanhToan = true;
+    //                 $scope.successThanhToan = res.data?.Message;
+    //             }
+    //         })
+    //     }
+    //     //END Chức năng thanh toán
+
+    //     //formatDate get date/month/year
+    //     $scope.formatDate = function (date) {
+    //         var dateOut = new Date(date);
+    //         return dateOut;
+    //     };
+    // });
+    //========End tìm kiếm thông tin đặt vé==============
+
+
+
 </script>
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="js/app.js"></script> -->
