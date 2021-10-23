@@ -952,6 +952,7 @@
     app.controller("veTauCtrl", function ($scope, $http) {
         $scope.onGetAllVeTau = function () {
             $http.get(localHost + "/api/ve/get-danh-sach-ve-tau").then(function (res) {
+                
                 console.log(res)
                 $scope.danhSachVeTau = res.data?.Data;
                 $scope.allDanhSachVeTau = res.data?.Data;
