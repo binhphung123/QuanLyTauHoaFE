@@ -17,31 +17,27 @@
                 </div>
                 <div class="body_search">
                     <div class="mb-3 row">
-                        <label for="gaDi" class="col-sm-2 col-form-label">Ga đi</label>
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Ga đi</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="gaDi" placeholder="Ga đi"
-                                ng-model="layTenGaDi" ng-focus="chonGaDi()" ng-change="checkEmpty()">
+                            <input type="text" class="form-control" placeholder="Ga đi" ng-model="layTenGaDi"
+                                ng-focus="chonGaDi()" ng-change="checkEmpty()">
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="gaDen" class="col-sm-2 col-form-label">Ga đến</label>
+                        <label for="inputPassword" class="col-sm-2 col-form-label">Ga đến</label>
                         <div class="col-sm-10">
-                            <input type="text" class="form-control" id="gaDen" placeholder="Ga đến"
-                                ng-model="layTenGaDen" ng-focus="chonGaDen()" ng-change="checkEmpty()">
+                            <input type="text" class="form-control" placeholder="Ga đến" ng-model="layTenGaDen"
+                                ng-focus="chonGaDen()" ng-change="checkEmpty()">
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="ngayDi" class="col-sm-2 col-form-label">Ngày</label>
+                        <label for="staticEmail" class="col-sm-2 col-form-label">Ngày</label>
                         <div class="col-sm-10">
-                            <input type="date" class="form-control" id="ngayDi" ng-model="ngayKhoiHanh"
-                                ng-change="checkEmpty()">
+                            <input type="date" class="form-control" ng-model="ngayKhoiHanh"
+                                ng-change="onChangeNgayKhoiHanh(ngayKhoiHanh)">
                         </div>
                     </div>
-                    <div class="text-center mb-3">
-                        <span ng-show="isError" class="text-danger">Vui lòng nhập đầy đủ 3 thông tin ở trên để tìm kiếm chuyến tàu!</span>
-                        <span ng-show="isEmptyData" class="text-danger">{{message}}</span>
-                        <span ng-show="isErrorStation" class="text-danger">{{errorStation}}</span>
-                    </div>
+                    <p class="text-danger m-0" ng-show="errorTimChuyenTau">{{errorTimChuyenTau}}</p>
                     <div class="text-center">
                         <button class="btn btn-primary text-center" ng-click="btnTimChuyenTau()">Tìm
                             kiếm</button>
