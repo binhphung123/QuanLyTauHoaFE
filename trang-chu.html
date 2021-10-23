@@ -43,8 +43,8 @@
                         <ul id="main_menu">
                             <li><a href="#/!"><i class="fas fa-home"></i></a></li>
                             <li class="active"><a href="#!tim-ve">Tìm vé</a></li>
-                            <li><a href="">Thông tin đặt chỗ</a></li>
-                            <li><a href="">Trả vé</a></li>
+                            <li><a href="#!thong-tin-dat-ve">Thông tin đặt vé</a></li>
+                            <li><a href="#!tra-ve">Trả vé</a></li>
                             <li><a href="">Tra cứu vé</a></li>
                             <li><a href="">Giờ tàu - Giá vé</a></li>
                             <li><a href="">Khuyến mại</a></li>
@@ -219,16 +219,19 @@
     var app = angular.module('trangChu', ["ngRoute"]);
     app.config(function ($routeProvider) {
         $routeProvider
-            // .when("/", {
-            //     templateUrl: "Tim-Ve/tim-ve.html",
-            //     controller: "trangTimTuyenCtrl"
-            // })
+            .when("/", {
+                templateUrl: "Trang-chu/trang-chu-view.html"
+            })
             .when("/tim-ve", {
                 templateUrl: "Tim-Ve/tim-ve.html",
                 controller: "trangTimTuyenCtrl"
             })
             .when("/dat-ve", {
                 templateUrl: "Tim-ve/Dat-Ve/dat-ve.html"
+            })
+            .when("/thong-tin-dat-ve", {
+                templateUrl: "Thong-tin-dat-ve/thong-tin-dat-ve.html",
+                controller: "trangTimKiemThongTinDatVeCtrl"
             })
             .when("/dang-nhap-khach-hang", {
                 templateUrl: "Dang-nhap-khach-hang/dang-nhap.html",
@@ -562,64 +565,131 @@
     });
 
 
-    // app.controller('trangChuCtrl', function ($scope, $rootScope) {
-
-    //     // $scope.$on('parentmethod', function (event, args) {
-    //     //     // $scope.isSignIn = args.isSignIn;
-    //     //     console.log("dang nhap: " + args)
-    //     // })
-    // });
-
-    // Khách hàng đăng nhập
-    app.controller('khachHangDangNhapCrtl', function ($scope, $http, $window, $rootScope) {
-        $scope.isError = false;
-        $scope.isSignIn = false;
-        //Sign in
-        $scope.btnDangNhapKH = function () {
+    app.controller('trangTimKiemThongTinDatVeCtrl', function ($scope, $http) {
+        $scope.btnTraCuuThongTinVe = function () {
+            $scope.isTicket = false;
+            $scope.isErrorTraVe = false;
+            $scope.isSuccessTraVe = false;
+            $scope.isEmptyData = false;
+            $scope.isErrorThanhToan = false;
+            $scope.isSuccessThanhToan = false;
             var data = {
-                "SoDT": $scope.soDT,
-                "MatKhau": $scope.matKhau
-            }
-            if (!$scope.soDT || !$scope.matKhau) {
+                "SoVe": $scope.soVe,
+                "CMND": $scope.cmnd,
+                "SoDT": $scope.sdt
+            };
+            if (!$scope.soVe || !$scope.cmnd || !$scope.sdt) {
                 return;
             }
             console.log(data);
-            $http.post(localHost + "/api/khachhang/dangnhap", data).then(function (response) {
+
+            $http.post(localHost + "/api/timkiemthongtinvedat/timkiemve", data).then(function (response) {
                 console.log(response.data)
                 if (!response.data?.Status) {
-                    $scope.isSignIn = true; // ko hiểu
+                    $scope.isEmptyData = true;
                     $scope.message = response.data.Message;
                 }
                 else {
-                    alert(response.data?.Message);
-                    console.log(response);
-                    $scope.tenKhachHang = response.data?.Data.HoTen;
-                    console.log("TenKH: " + $scope.tenKhachHang)
-                    localStorage.setItem("SoDT", $scope.soDT)
-                    localStorage.setItem("HoTen", $scope.tenKhachHang)
-                    // $scope.SayHello = function () {
-                    //     console.log("Say hello")
-                    //     $scope.$broadcast('parentmethod', { isSignIn: "Hello" });
-                    // }
-
-                    // $scope.SayHello();
-                    $window.location.href = 'trang-chu.html';
+                    $scope.isEmptyData = false;
+                    $scope.isTicket = true;
+                    $scope.veTraCuu = response.data?.Data;
                 }
             });
         }
 
-        //Check Empty Login
-        $scope.checkEmptyLogin = function () {
-            $scope.isSignIn = false;
-            if (!$scope.soDT || !$scope.matKhau) {
+        //Kiểm tra người dùng chưa nhập đủ thông tin Tìm kiếm thông tin đặt vé
+        $scope.checkEmptyTicket = function () {
+            $scope.isEmptyData = false;
+            if (!$scope.soVe || !$scope.cmnd || !$scope.sdt) {
                 $scope.isError = true;
             }
             else {
                 $scope.isError = false;
             }
         }
+
+        //Chức năng trả vé
+        $scope.isTraVe = false;
+        $scope.hienThiTrangThai = true;
+
+        $scope.onTraVe = function () {
+            $scope.isTraVe = true;
+            $scope.hienThiTrangThai = false;
+        }
+        $scope.onHuyTraVe = function () {
+            $scope.isTraVe = false;
+            $scope.isErrorTraVe = false;
+            $scope.hienThiTrangThai = true;
+        }
+        $scope.onXacNhanTraVe = function (veTraCuu) {
+            var model = {
+                "MaVe": veTraCuu.SoVe,
+                "CMND": veTraCuu.CMND,
+                "MaBaoMat": $scope.maBaoMat
+            }
+
+            console.log(model);
+            $http.post("https://localhost:44305/api/ve/tra-ve", model).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isSuccessTraVe = false;
+                    $scope.isErrorTraVe = true;
+                    $scope.errorTraVe = res.data.Message;
+                } else {
+                    $scope.hienThiTrangThai = true;
+                    $scope.isErrorTraVe = false;
+                    $scope.btnTraCuuThongTinVe();
+                    $scope.isTraVe = false;
+                    $scope.maBaoMat = "";
+                    $scope.isSuccessTraVe = true;
+                    $scope.successTraVe = res.data?.Message;
+                }
+            })
+        }
+        //END Chức năng trả vé
+
+        //Chức năng thanh toán
+        $scope.isThanhToan = false;
+        $scope.hienThiTrangThai = true;
+        $scope.onThanhToan = function () {
+            $scope.isThanhToan = true;
+            $scope.hienThiTrangThai = false;
+        }
+        $scope.onHuyThanhToan = function () {
+            $scope.isThanhToan = false;
+            $scope.isErrorThanhToan = false;
+            $scope.hienThiTrangThai = true;
+        }
+        $scope.onXacNhanThanhToan = function (veTraCuu) {
+            var model = {
+                "MaVe": veTraCuu.SoVe,
+                "CMND": $scope.inputCMND,
+                "MaBaoMat": $scope.maBaoMat
+            }
+
+            console.log(model);
+            $http.post("https://localhost:44305/api/ve/thanh-toan", model).then(function (res) {
+                console.log(res);
+                if (!res.data?.Status) {
+                    $scope.isSuccessThanhToan = false;
+                    $scope.isErrorThanhToan = true;
+                    $scope.errorThanhToan = res.data.Message;
+                } else {
+                    $scope.hienThiTrangThai = true;
+                    $scope.isErrorThanhToan = false;
+                    $scope.btnTraCuuThongTinVe();
+                    $scope.isThanhToan = false;
+                    $scope.inputCMND = "";
+                    $scope.maBaoMat = "";
+                    $scope.isSuccessThanhToan = true;
+                    $scope.successThanhToan = res.data?.Message;
+                }
+            })
+        }
+        //END Chức năng thanh toán
+
     });
-    // end khách hàng đăng nhập
+
 </script>
 <!-- <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
 <script src="js/app.js"></script> -->

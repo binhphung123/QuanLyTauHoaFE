@@ -47,6 +47,10 @@
                             <i class="fas fa-subway"></i>
                             <a href="#!quan-ly-chuyen-tau">Quản lý chuyến tàu</a>
                         </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#!quan-ly-ve-tau">Quản lý vé tàu</a>
+                        </li>
                     </ul>
                 </div>
             </div>
@@ -146,6 +150,10 @@
             .when("/quan-ly-chuyen-tau", {
                 templateUrl: "quan-ly-chuyen-tau/quan-ly-chuyen-tau.html",
                 controller: "chuyenTauCtrl"
+            })
+            .when("/quan-ly-ve-tau", {
+                templateUrl: "quan-ly-ve-tau/quan-ly-ve-tau.html",
+                controller: "veTauCtrl"
             })
             ;
 
@@ -1183,7 +1191,7 @@
             var isXacNhan = confirm("Xác nhận khởi hành");
             if (isXacNhan) {
                 $http.post(localHost + "/api/chuyentau/cap-nhat-trang-thai", model).then(function (res) {
-                    if(!res.data?.Status){
+                    if (!res.data?.Status) {
                         alert(res.data?.Message)
                         return;
                     }
@@ -1195,8 +1203,8 @@
 
 
         }
-    
-        $scope.onHoanThanh = function(chuyenTau){
+
+        $scope.onHoanThanh = function (chuyenTau) {
             var model = {
                 "MaChuyenTau": chuyenTau.MaChuyenTau,
                 "TrangThai": 3
@@ -1205,7 +1213,7 @@
             var isXacNhan = confirm("Xác nhận hoàn thành");
             if (isXacNhan) {
                 $http.post(localHost + "/api/chuyentau/cap-nhat-trang-thai", model).then(function (res) {
-                    if(!res.data?.Status){
+                    if (!res.data?.Status) {
                         alert(res.data?.Message)
                         return;
                     }
@@ -1216,6 +1224,171 @@
             }
         }
     })
+
+    app.controller("veTauCtrl", function ($scope, $http) {
+        $scope.onGetAllVeTau = function () {
+            $http.get(localHost + "/api/ve/get-danh-sach-ve-tau").then(function (res) {
+                console.log(res)
+                $scope.danhSachVeTau = res.data?.Data;
+                $scope.allDanhSachVeTau = res.data?.Data;
+                var tongSoTrang = $scope.danhSachVeTau.length;
+                console.log("tong")
+                console.log(tongSoTrang)
+                $scope.onChangeFilterVeTau();
+            })
+
+        }
+
+
+
+        $scope.khoiTaoNgay = function () {
+            $scope.ngaySearch = [];
+            $scope.thangSearch = [];
+            $scope.namSearch = [];
+            for (var i = 1; i <= 31; i++) {
+                $scope.ngaySearch.push(i)
+            }
+
+            for (var i = 1; i <= 12; i++) {
+                $scope.thangSearch.push(i);
+            }
+
+            var namBatDau = 2015;
+            var namKetThuc = 2025;
+            for (var i = namBatDau; i <= namKetThuc; i++) {
+                $scope.namSearch.push(i);
+            }
+        }
+
+        $scope.khoiTaoNgay();
+
+        $scope.onGetAllVeTau();
+
+        $scope.isFullVeTau = false;
+        $scope.onChangeFilterVeTau = function () {
+            console.log($scope.ngayFilterSelected)
+            console.log($scope.thangFilterSelected)
+            console.log($scope.namFilterSelected)
+            $scope.danhSachVeTau = $scope.allDanhSachVeTau;
+            if ($scope.searchInfoVe) {
+                $scope.danhSachVeTau = $scope.danhSachVeTau.filter(x => x.CMND.includes($scope.searchInfoVe) ||
+                    x.HoTen.toLowerCase().includes($scope.searchInfoVe.toLowerCase()) ||
+                    x.SoDT.includes($scope.searchInfoVe)
+                );
+            }
+            if ($scope.ngayFilterSelected != 0) {
+                $scope.danhSachVeTau = $scope.danhSachVeTau.filter(x => new Date(x.NgayBanVe).getDate() == $scope.ngayFilterSelected);
+            }
+            if ($scope.thangFilterSelected != 0) {
+                $scope.danhSachVeTau = $scope.danhSachVeTau.filter(x => new Date(x.NgayBanVe).getMonth() + 1 == $scope.thangFilterSelected);
+            }
+            if ($scope.namFilterSelected != 0) {
+                $scope.danhSachVeTau = $scope.danhSachVeTau.filter(x => new Date(x.NgayBanVe).getFullYear() == $scope.namFilterSelected);
+            }
+            if ($scope.trangThaiFilterSelected != 0) {
+                $scope.danhSachVeTau = $scope.danhSachVeTau.filter(x => x.TrangThai == $scope.trangThaiFilterSelected);
+            }
+            $scope.phanTrang($scope.danhSachVeTau.length);
+
+            if ($scope.danhSachVeTau.length == $scope.allDanhSachVeTau.length) {
+                $scope.isFullVeTau = true;
+            }
+            else {
+                $scope.isFullVeTau = false;
+            }
+            $scope.danhSachVeTauTam = $scope.danhSachVeTau;
+            $scope.onSelectTrang(1);
+        }
+
+        $scope.onTraVe = function (veTau) {
+            console.log(veTau)
+            var isXacNhan = confirm("Xác nhận trả vé");
+            if (isXacNhan) {
+                $http.post(localHost + "/api/ve/tra-ve-admin/" + veTau.SoVe).then(function (res) {
+                    console.log(res);
+                    alert(res.data?.Message)
+                    if (!res.data?.Status) {
+                        return;
+                    }
+
+                    $scope.onGetAllVeTau();
+
+                })
+            }
+        }
+
+        $scope.onDoiVe = function (veTau) {
+            console.log(veTau)
+            var isXacNhan = confirm("Xác nhận đổi vé");
+            if (isXacNhan) {
+                $http.post(localHost + "/api/ve/doi-ve-admin/" + veTau.SoVe).then(function (res) {
+                    console.log(res);
+                    alert(res.data?.Message)
+                    if (!res.data?.Status) {
+                        return;
+                    }
+
+                    $scope.onGetAllVeTau();
+                })
+            }
+        }
+
+        $scope.onThanhToan = function (veTau) {
+            console.log(veTau)
+            var isXacNhan = confirm("Xác nhận thanh toán");
+            if (isXacNhan) {
+                $http.post(localHost + "/api/ve/thanh-toan-ve-admin/" + veTau.SoVe).then(function (res) {
+                    console.log(res);
+                    alert(res.data?.Message)
+                    if (!res.data?.Status) {
+                        return;
+                    }
+
+                    $scope.onGetAllVeTau();
+                })
+            }
+        }
+
+        $scope.phanTrang = function (tongPhanTu) {
+            var tongSoTrang = tongPhanTu / 10;
+            console.log("Tong pt:" + tongPhanTu);
+            if (tongPhanTu > 10 && tongPhanTu % 10 != 0) {
+                tongSoTrang += 1;
+            }
+            $scope.danhSachTrang = [];
+            if (tongSoTrang > 1) {
+                for (var i = 1; i <= tongSoTrang; i++) {
+                    $scope.danhSachTrang.push(i);
+                }
+            }
+
+
+            console.log($scope.danhSachTrang)
+        }
+
+
+        $scope.onSelectTrang = function (soTrang) {
+            $scope.trangSelected = soTrang;
+            $scope.danhSachVePaging = [];
+            $scope.trangSelected = soTrang;
+            var soPhanTuTrenTrang = 10;
+            if ($scope.isFullVeTau) {
+                $scope.danhSachVeTau = $scope.allDanhSachVeTau;
+            }
+            else {
+                $scope.danhSachVeTau = $scope.danhSachVeTauTam;
+            }
+            for (var i = (soTrang - 1) * soPhanTuTrenTrang; i < soTrang * soPhanTuTrenTrang; i++) {
+                if ($scope.danhSachVeTau[i]) {
+                    $scope.danhSachVePaging.push($scope.danhSachVeTau[i]);
+                }
+            }
+
+            $scope.danhSachVeTau = $scope.danhSachVePaging;
+        }
+
+    });
+
 </script>
 
 </html>

@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body ng-app="trangQuanLyVeTau">
+    <h2>Danh sách vé tàu</h2>
+    <hr />
+    <div class="m-3">
+        <span>Tìm kiếm thông tin khách: </span>
+        <input type="text" class="mr-4" style="width: 15%;" ng-model="searchInfoVe" ng-change="onChangeFilterVeTau()">
+
+        <span>Ngày bán vé: </span>
+        <select class="mr-3" ng-model="ngayFilterSelected" ng-init="ngayFilterSelected = '0'"
+            ng-change="onChangeFilterVeTau()">
+            <option value="0">Tất cả</option>
+            <option ng-repeat="ngay in ngaySearch | orderBy: 'ngay'" value="{{ngaySearch[$index]}}"
+                ng-selected="ngayFilterSelected == ngaySearch[$index]">
+                {{ngay}}
+            </option>
+        </select>
+
+        <span>Tháng bán vé: </span>
+        <select class="mr-3" ng-model="thangFilterSelected" ng-init="thangFilterSelected = '0'"
+            ng-change="onChangeFilterVeTau()">
+            <option value="0">Tất cả</option>
+            <option ng-repeat="thang in thangSearch | orderBy: 'thang'" value="{{thangSearch[$index]}}"
+                ng-selected="thangFilterSelected == thangSearch[$index]">
+                {{thang}}
+            </option>
+        </select>
+
+        <span>Năm bán vé: </span>
+        <select class="mr-4" ng-model="namFilterSelected" ng-init="namFilterSelected = '0'" ng-change="onChangeFilterVeTau()">
+            <option value="0">Tất cả</option>
+            <option ng-repeat="nam in namSearch | orderBy: 'nam'" value="{{namSearch[$index]}}"
+                ng-selected="namFilterSelected == namSearch[$index]">
+                {{nam}}
+            </option>
+        </select>
+
+        <span>Trạng thái: </span>
+        <select ng-model="trangThaiFilterSelected" ng-init="trangThaiFilterSelected = '0'" ng-change="onChangeFilterVeTau()">
+            <option value="0">Tất cả</option>
+            <option value="1">Đã thanh toán</option>
+            <option value="2">Chưa thanh toán</option>
+            <option value="3">Đã hủy</option>
+            <option value="4">Hoàn thành</option>
+        </select>
+
+        <table class="table" style="font-size: 14px; text-align: center;">
+            <thead class="bg-dark text-white">
+                <tr>
+                    <th>Mã vé</th>
+                    <th>Thông tin khách</th>
+                    <th>Thông tin hành trình</th>
+                    <th>Thông tin chỗ</th>
+                    <th>Loại vé / Loại chỗ</th>
+                    <th>Ngày bán vé</th>
+                    <th>Thành tiền</th>
+                    <th>Trạng thái</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="veTau in danhSachVeTau">
+                    <td class="border border-2">{{veTau.SoVe}}</td>
+                    <td class="border border-2">
+                        <p class="mb-0">Họ tên: <span class="font-weight-bold">{{veTau.HoTen}}</span></p>
+                        <p class="mb-0">CMND: <span class="font-weight-bold">{{veTau.CMND}}</span></p>
+                        <p class="mb-0">SDT: <span class="font-weight-bold">{{veTau.SoDT}}</span></p>
+                    </td>
+                    <td class="border border-2">
+                        <p class="mb-0">Tàu: <span class="font-weight-bold">{{veTau.TenTau}}</span></p>
+                        <p class="mb-0 font-weight-bold">{{veTau.GaDi}} <i class="fas fa-long-arrow-alt-right"></i>
+                            {{veTau.GaDen}}</p>
+                        <p class="mb-0 font-weight-bold">{{veTau.NgayKhoiHanh | date:'dd/MM/yyyy'}} -
+                            {{veTau.GioKhoiHanh}}</p>
+                    </td>
+                    <td class="border border-2">
+                        <p class="mb-0">Toa: <span class="font-weight-bold">{{veTau.TenToa}}</span></p>
+                        <p class="mb-0">Chỗ số: <span class="font-weight-bold">{{veTau.TenGhe}}</span></p>
+                    </td>
+                    <td class="border border-2">
+                        <p>
+                            <span ng-show="veTau.TrangThaiVe == 1" class="mb-0 font-weight-bold">Cá nhân</span>
+                            <span ng-show="veTau.TrangThaiVe == 2" class="mb-0 font-weight-bold">Tập thể</span> /
+                            <span ng-show="veTau.LoaiVe == 1" class="mb-0 font-weight-bold">Giường nằm</span>
+                            <span ng-show="veTau.LoaiVe == 2" class="mb-0 font-weight-bold">Ghế ngồi</span>
+                        </p>
+                    </td>
+                    <td class="border border-2 font-weight-bold">{{veTau.NgayBanVe |
+                        date:'dd/MM/yyyy'}}</td>
+                    <td class="border border-2 font-weight-bold">{{veTau.GiaVe | number}} VNĐ</td>
+                    <td class="border border-2">
+                        <button ng-show="veTau.TrangThai == 1" class="btn btn-success" ng-click="onTraVe(veTau)">Trả
+                            vé</button>
+                        <button ng-show="veTau.TrangThai == 1 && veTau.LoaiVe != 2" class="btn btn-danger"
+                            ng-click="onDoiVe(veTau)">Đổi vé</button>
+                        <button ng-show="veTau.TrangThai == 2" class="btn btn-success"
+                            ng-click="onThanhToan(veTau)">Thanh toán</button>
+                        <p ng-show="veTau.TrangThai == 3" class="mb-0 font-weight-bold text-danger">Đã hủy</p>
+                        <p ng-show="veTau.TrangThai == 4" class="mb-0 font-weight-bold text-success">Hoàn thành</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div>
+            <ul>
+                <li style="display: inline;" ng-repeat="soTrang in danhSachTrang">
+                    <button class="btn btn-primary" ng-click="onSelectTrang(soTrang)">
+                        {{soTrang}}
+                    </button>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+</body>
+
+</html>
