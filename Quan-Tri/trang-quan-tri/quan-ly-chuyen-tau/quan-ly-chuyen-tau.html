@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="quan-ly-chuyen-tau">
+        <h2>Quản lý chuyến tàu</h2>
+        <hr />
+        <button class="btn btn-primary mb-3" ng-click="onShowThemChuyenTau()">Thêm chuyến tàu</button>
+        <table class="table text-center">
+            <thead class="text-white bg-dark">
+                <tr>
+                    <td>Thông tin chuyến</td>
+                    <td>Giá vé</td>
+                    <td>Số toa</td>
+                    <td>Số vé đặt</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-show="isShowThemChuyenTau">
+                    <td style="width: 500px;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1" style="width: 150px;">Tàu: </span>
+                            </div>
+                            <select ng-model="tauMoiSelected" track by $index class="form-control">
+                                <option ng-repeat="tau in danhSachTau" value="{{tau.MaTau}}"
+                                    ng-selected="tauMoiSelected == tau.MaTau">
+                                    {{tau.TenTau}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1" style="width: 150px;">Chuyến: </span>
+                            </div>
+                            <select ng-model="chuyenMoiSelected" track by $index class="form-control">
+                                <option ng-repeat="chuyen in danhSachChuyen | orderBy: 'TimeOrderBy'" value="{{chuyen.MaChuyen}}"
+                                    ng-selected="chuyenMoiSelected == chuyen.MaChuyen">
+                                    {{chuyen.TenGaDi}} -> {{chuyen.TenGaDen}} {{chuyen.GioKhoiHanh}}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1" style="width: 150px;">Ngày khởi hành: </span>
+                            </div>
+                            <input type="date" ng-model="ngayKhoiHanhSelected" class="form-control"/>
+                        </div>
+                        <p class="text-danger" style="text-align: left;" ng-show="errorThemChuyenTau">{{errorThemChuyenTau}}</p>
+                    </td>
+                    <td style="width: 400px; vertical-align: middle;">
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1" style="width: 100px;">Vé ngồi: </span>
+                            </div>
+                            <input type="text" ng-model="veNgoiSelected" class="form-control"/>
+                        </div>
+                        <div class="input-group mb-3">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text" id="basic-addon1" style="width: 100px;">Vé nằm: </span>
+                            </div>
+                            <input type="text" ng-model="veNamSelected" class="form-control"/>
+                        </div>
+                    </td>
+                    <td>
+                    </td>
+                    <td>
+                    </td>
+                    <td style="vertical-align: middle;">
+                        <button class="btn btn-success" ng-click="onThemChuyenTau()">Thêm</button>
+                        <button class="btn btn-danger" ng-click="onHuyShowThemChuyenTau()">Hủy</button>
+                    </td>
+                </tr>
+                <tr ng-repeat="chuyenTau in danhSachChuyenTau" class="quan-ly-chuyen-tau-danh-sach">
+                    <td class="qlct-thong-tin-chuyen">
+                        <p><b>{{chuyenTau.TenTau}}</b></p>
+                        <p>Ga đi: <b>{{chuyenTau.GaDi}}</b></p>
+                        <p>Ga đến: <b>{{chuyenTau.GaDen}}</b></p>
+                        <p>
+                            {{chuyenTau.NgayKhoiHanh | date:'dd-MM-yyyy'}} {{chuyenTau.GioKhoiHanh}}
+                        </p>
+                    </td>
+                    <td>
+                        <p>Vé ngồi: <b>{{chuyenTau.GiaVeNgoi | number}} VNĐ</b></p>
+                        <p>Vé nằm: <b>{{chuyenTau.GiaVeNam | number}} VNĐ</b></p>
+                    </td>
+                    <td>
+                        {{chuyenTau.SoLuongToa}}
+                    </td>
+                    <td>
+                        {{chuyenTau.SoGheDaDat}} / {{chuyenTau.TongSoLuongGhe}}
+                    </td>
+                    <td>
+                        <span class="text-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 3">Đã Hoàn thành</span>
+                        <button class="btn btn-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 2" ng-click="onKhoiHanh(chuyenTau)">Khởi hành</button>
+                        <button class="btn btn-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 1" ng-click="onHoanThanh(chuyenTau)">Hoàn thành</button>
+                        <button class="btn btn-danger" ng-show="chuyenTau.SoGheDaDat <= 0" ng-click="onXoaChuyenTau(chuyenTau)">Xóa</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</body>
+
+</html>

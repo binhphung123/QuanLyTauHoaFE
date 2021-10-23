@@ -31,7 +31,7 @@
                 border-color: #545b62;
             }
         }
-        .danh-sach-ghe-chon{
+        .danh-sach-ghe-chon {
             width: 45px;
             height: 45px;
             font-size: 12px;
@@ -72,18 +72,26 @@
         }
     }
 
-    .danh-sach-toa-dat-ve{
-        .danh-sach-toa-dat-ve-chuyen-tau{
+    .danh-sach-toa-dat-ve {
+        .danh-sach-toa-dat-ve-chuyen-tau {
             width: 200px;
             font-size: 13px;
-            p{
+            p {
                 margin: 0;
             }
         }
-        .danh-sach-toa-dat-ve-ten-toa{
+        .danh-sach-toa-dat-ve-ten-toa {
             font-size: 13px;
             vertical-align: middle;
             width: 150px;
         }
     }
+}
+
+.danh-sach-ghe-scroll{
+    white-space: nowrap;
+    overflow-x: scroll;
+    overflow-y: hidden;
+    height: 320px;
+    white-space: nowrap;
 }

@@ -1,3 +1,8 @@
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+}
+
 .trang-quan-tri {
   background-color: #fafafa;
 }
@@ -27,5 +32,55 @@
 .trang-quan-tri .quan-tri-menu .quan-tri-menu-item a:hover {
   text-decoration: none;
   color: white;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item {
+  width: 25%;
+  padding: 20px;
+  margin: 10px;
+  background-color: white;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item i {
+  font-size: 18px;
+  padding: 26px;
+  color: white;
+  border-radius: 50%;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item .trang-quan-tri-dashboard-item-text {
+  padding: 10px 12px;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item .trang-quan-tri-dashboard-item-text span {
+  font-weight: bold;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item1 i {
+  background: #7547ff;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item2 i {
+  background: #ff2667;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item3 i {
+  background: #3693fd;
+}
+
+.trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item4 i {
+  background: #25c73a;
 }
 /*# sourceMappingURL=trang-quan-tri.css.map */

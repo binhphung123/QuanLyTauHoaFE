@@ -37,10 +37,10 @@
                                 ng-change="onChangeNgayKhoiHanh(ngayKhoiHanh)">
                         </div>
                     </div>
+                    <p class="text-danger m-0" ng-show="errorTimChuyenTau">{{errorTimChuyenTau}}</p>
                     <div class="text-center">
                         <button class="btn btn-primary text-center" ng-click="btnTimChuyenTau()">Tìm
                             kiếm</button>
-                        <span ng-show="isInvalidStation" class="text-danger">Ga đi và ga đến không hợp lệ!</span>
                         <div class="list_train mt-4">
                             <a href="" ng-repeat="x in myRouteData | orderBy:'TenGa' track by $index"
                                 ng-click="chonTenGa(x)">
@@ -70,15 +70,17 @@
                                 <td>{{tramGa.GaDi}}</td>
                                 <td>{{tramGa.GaDen}}</td>
                                 <td>{{tramGa.TenTau}}</td>
-                                <td>{{formatDate(tramGa.NgayKhoiHanh) | date:'dd/MM/yyyy'}}}</td>
+                                <td>{{formatDate(tramGa.NgayKhoiHanh) | date:'dd/MM/yyyy'}}</td>
                                 <td>{{tramGa.GioKhoiHanh}}</td>
                                 <td>{{tramGa.GiaVeNgoi | number}} VNĐ</td>
                                 <td>{{tramGa.GiaVeNam | number}} VNĐ</td>
                                 <td>
                                     <!-- <a ng-href="#/product/{{item.id}}">More Info</a> -->
-                                    <button ng-show="{{!tramGa.HetHan}}" class="btn btn-primary"
+                                    <button ng-show="!tramGa.HetHan && tramGa.TrangThai == 2" class="btn btn-primary"
                                         ng-click="onSelectChuyenTau(tramGa)">Chọn</button>
-                                    <p class="text-danger" ng-show="{{tramGa.HetHan}}">Đã quá giờ</p>
+                                    <p class="text-danger" ng-show="tramGa.HetHan && tramGa.TrangThai == 2">Đã quá giờ</p>
+                                    <p class="text-primary" ng-show="tramGa.TrangThai == 1">Đang khởi hành</p>
+                                    <p class="text-success" ng-show="tramGa.TrangThai == 3">Đã hoàn hành</p>
                                 </td>
                             </tr>
                         </tbody>
@@ -108,9 +110,9 @@
                             <button class="btn danh-sach-toa-item" ng-click="onSelectToa(toa)">
                                 <i class="fas fa-train"></i>
                                 <div class="text-center danh-sach-toa-item-info">
-                                    <p class="mb-0">Tên toa: {{toa.TenToa}}</p>
+                                    <p class="mb-0">Tên toa: <b>{{toa.TenToa}}</b></p>
                                     <p class="mb-0">
-                                        Loại toa: {{toa.LoaiToa == 1 ? "Nằm" : "Ngồi"}}
+                                        Loại toa: <b>{{toa.LoaiToa == 1 ? "Nằm" : "Ngồi"}}</b>
                                     </p>
                                 </div>
                             </button>
@@ -120,73 +122,75 @@
 
                     <hr>
                     <br />
+                    <div class="danh-sach-ghe-scroll">
 
-                    <div class="danh-sach-ghe">
-                        <span ng-repeat="ghe in danhSachGheDay3" class="m-2 danh-sach-ghe-item"
-                            ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
-                            <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
-                                ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
-                                {{ghe.TenGhe}}
-                            </button>
+                        <div class="danh-sach-ghe">
+                            <span ng-repeat="ghe in danhSachGheDay3" class="m-2 danh-sach-ghe-item"
+                                ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
+                                <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
+                                    ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
+                                    {{ghe.TenGhe}}
+                                </button>
 
-                            <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
-                                {{ghe.TenGhe}}
-                            </button>
-                            <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
-                        </span>
+                                <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
+                                    {{ghe.TenGhe}}
+                                </button>
+                                <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
+                            </span>
+                        </div>
+
+                        <br />
+
+                        <div class="danh-sach-ghe">
+                            <span ng-repeat="ghe in danhSachGheDay2" class="m-2 danh-sach-ghe-item"
+                                ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
+                                <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
+                                    ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
+                                    {{ghe.TenGhe}}
+                                </button>
+
+                                <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
+                                    {{ghe.TenGhe}}
+                                </button>
+                                <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
+                            </span>
+                        </div>
+
+                        <p style="height: 25px;"></p>
+
+                        <div class="danh-sach-ghe">
+                            <span ng-repeat="ghe in danhSachGheDay1" class="m-2 danh-sach-ghe-item"
+                                ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
+                                <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
+                                    ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
+                                    {{ghe.TenGhe}}
+                                </button>
+
+                                <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
+                                    {{ghe.TenGhe}}
+                                </button>
+                                <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
+                            </span>
+                        </div>
+
+                        <br />
+
+                        <div class="danh-sach-ghe">
+                            <span ng-repeat="ghe in danhSachGheDay0" class="m-2 danh-sach-ghe-item"
+                                ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
+                                <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
+                                    ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
+                                    {{ghe.TenGhe}}
+                                </button>
+
+                                <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
+                                    {{ghe.TenGhe}}
+                                </button>
+                                <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
+                            </span>
+                        </div>
+
                     </div>
-
-                    <br />
-
-                    <div class="danh-sach-ghe">
-                        <span ng-repeat="ghe in danhSachGheDay2" class="m-2 danh-sach-ghe-item"
-                            ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
-                            <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
-                                ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
-                                {{ghe.TenGhe}}
-                            </button>
-
-                            <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
-                                {{ghe.TenGhe}}
-                            </button>
-                            <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
-                        </span>
-                    </div>
-
-                    <p style="height: 25px;"></p>
-
-                    <div class="danh-sach-ghe">
-                        <span ng-repeat="ghe in danhSachGheDay1" class="m-2 danh-sach-ghe-item"
-                            ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
-                            <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
-                                ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
-                                {{ghe.TenGhe}}
-                            </button>
-
-                            <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
-                                {{ghe.TenGhe}}
-                            </button>
-                            <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
-                        </span>
-                    </div>
-
-                    <br />
-
-                    <div class="danh-sach-ghe">
-                        <span ng-repeat="ghe in danhSachGheDay0" class="m-2 danh-sach-ghe-item"
-                            ng-class="{0: 'danh-sach-ghe-ten-margin'}[($index + 1) % 7]">
-                            <button ng-show="!ghe.DaDat" class="danh-sach-ghe-chua-dat" ng-click="onSelectGhe(ghe)"
-                                ng-class="(listMaGheChon.indexOf(ghe.MaGhe) != -1) ? 'danh-sach-ghe-chon' : 'danh-sach-ghe-chua-dat'">
-                                {{ghe.TenGhe}}
-                            </button>
-
-                            <button ng-show="ghe.DaDat" class="danh-sach-ghe-da-dat">
-                                {{ghe.TenGhe}}
-                            </button>
-                            <span ng-show="($index + 1) % 7 == 0" class="danh-sach-ghe-wall"></span>
-                        </span>
-                    </div>
-
                     <hr>
                     <br />
 
@@ -297,7 +301,7 @@
                                             ng-click="onSelectPhuongThucTT()">
                                         <label for="thanhToanTrucTiep">
                                             <image width="170px" height="84px"
-                                                src="https://lh3.googleusercontent.com/proxy/Fr8Akzql69HQu0IJKXU8RCqDvAYvDRgyEYrrfvuaV3muC5zlV3oNh7L-w_GNTHBboUV37EzLia5sRUzH6rOnbzhdSYcHla3NRqc6AgsSYg-uC-0Jug" />
+                                                src="../images/tienmat.png" />
                                         </label>
                                     </div>
                                 </td>
@@ -326,7 +330,7 @@
                                             ng-click="onSelectPhuongThucTT()">
                                         <label for="thanhToanTrucTuyen">
                                             <image width="170px"
-                                                src="https://thietkelogo.vn/wp-content/uploads/2015/12/tong-hop-logo-cua-cac-ngan-hang.jpg" />
+                                                src="../images/techcombank.png" />
                                         </label>
                                     </div>
                                 </td>
@@ -334,7 +338,7 @@
                                     <p class="text-primary font-weight-bold m-0">Thanh toán trực tuyến:</p>
                                     <ul style="font-size: 14px;">
                                         <li>
-                                            Bằng thẻ VietComBank đã liên kết với hệ thống ga tàu
+                                            Bằng thẻ TECHCOMBANK đã liên kết với hệ thống ga tàu
                                         </li>
                                     </ul>
                                 </td>
@@ -360,7 +364,7 @@
                     <p class="text-danger" ng-show="errorThanhToan">{{errorThanhToan}}</p>
                     <button class="btn btn-success" style="text-align: right;" ng-click="onDatVe()"
                         ng-disabled="isDatVeThanhCong">Xác nhận đặt vé</button>
-
+                    <button class="btn btn-success" ng-show="isDatVeThanhCong" ng-click="clearAll()">Tiếp tục đặt vé</button>
                     <hr />
                     <div ng-show="isDatVeThanhCong">
                         <p class="text-success" style="font-size: 25px; text-align: center;">

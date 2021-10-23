@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACI,mBADe,CACf,6BAA6B,CAAA;EACzB,SAAS,EAAE,IAAI;CASlB;;AAXL,AAGQ,mBAHW,CACf,6BAA6B,CAEzB,EAAE,CAAA;EACE,cAAc,EAAE,MAAM;CACzB;;AALT,AAOY,mBAPO,CACf,6BAA6B,CAKzB,sBAAsB,CAClB,CAAC,CAAA;EACG,MAAM,EAAE,CAAC;CACZ",
+    "sources": [
+        "quan-ly-chuyen-tau.scss"
+    ],
+    "names": [],
+    "file": "quan-ly-chuyen-tau.css"
+}

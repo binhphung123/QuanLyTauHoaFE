@@ -91,4 +91,12 @@
   vertical-align: middle;
   width: 150px;
 }
+
+.danh-sach-ghe-scroll {
+  white-space: nowrap;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  height: 320px;
+  white-space: nowrap;
+}
 /*# sourceMappingURL=tim-ve.css.map */

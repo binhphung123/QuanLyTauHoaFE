@@ -9,6 +9,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
     <link rel="stylesheet" href="trang-quan-tri.css">
+    <link rel="stylesheet" href="./quan-ly-chuyen-tau/quan-ly-chuyen-tau.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
@@ -42,10 +43,69 @@
                             <i class="fas fa-subway"></i>
                             <a href="#!quan-ly-toa">Quản lý toa</a>
                         </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#!quan-ly-chuyen-tau">Quản lý chuyến tàu</a>
+                        </li>
                     </ul>
                 </div>
             </div>
             <div class="col-md-10">
+                <div class="trang-quan-tri-dashboard">
+                    <div class="trang-quan-tri-dashboard-item trang-quan-tri-dashboard-item1">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <i class="fas fa-money-bill-wave"></i>
+                            </div>
+                            <div class="col-md-9 trang-quan-tri-dashboard-item-text">
+                                <span>
+                                    {{thongTinChung.TongDoanhThu | number}} VNĐ
+                                </span>
+                                <p>Doanh thu</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trang-quan-tri-dashboard-item trang-quan-tri-dashboard-item2">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <i class="fas fa-subway"></i>
+                            </div>
+                            <div class="col-md-9 trang-quan-tri-dashboard-item-text">
+                                <span>
+                                    {{thongTinChung.SoLuongTau}}
+                                </span>
+                                <p>Số lượng tàu</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trang-quan-tri-dashboard-item trang-quan-tri-dashboard-item3">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <i class="fas fa-store-alt"></i>
+                            </div>
+                            <div class="col-md-9 trang-quan-tri-dashboard-item-text">
+                                <span>
+                                    {{thongTinChung.TongSoGa}}
+                                </span>
+                                <p>Số lượng ga</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="trang-quan-tri-dashboard-item trang-quan-tri-dashboard-item4">
+                        <div class="row">
+                            <div class="col-md-3">
+                                <i class="fas fa-users"></i>
+                            </div>
+                            <div class="col-md-9 trang-quan-tri-dashboard-item-text">
+                                <span>
+                                    {{thongTinChung.TongSoKhachHang}}
+                                </span>
+                                <p>Số khách hàng</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <ng-view></ng-view>
             </div>
         </div>
@@ -83,11 +143,28 @@
                 templateUrl: "quan-ly-toa/quan-ly-toa.html",
                 controller: "toaCtrl"
             })
+            .when("/quan-ly-chuyen-tau", {
+                templateUrl: "quan-ly-chuyen-tau/quan-ly-chuyen-tau.html",
+                controller: "chuyenTauCtrl"
+            })
             ;
 
     });
-    app.controller('trangQuanTriCrtl', function ($scope, $http) {
+    app.controller('trangQuanTriCrtl', function ($scope, $http, $window) {
+        var taiKhoan = localStorage.getItem("taikhoan");
+        console.log(taiKhoan);
+        if (!taiKhoan) {
+            $window.location.href = '../quan-tri.html';
+        }
 
+        $scope.getInfoDashBoard = function () {
+            $http.get(localHost + "/api/nhanvien/dashboard").then(function (res) {
+                console.log(res);
+                $scope.thongTinChung = res.data?.Data;
+            })
+        }
+
+        $scope.getInfoDashBoard();
     })
 
     app.controller("gaCtrl", function ($scope, $http, $filter) {
@@ -299,7 +376,7 @@
             $http.get(localHost + "/api/tuyen/get-all").then(function (res) {
                 console.log("Tuyen")
                 console.log(res);
-                $scope.danhSachChuyen = res.data.Data;
+                $scope.danhSachTuyen = res.data.Data;
             });
         }
 
@@ -499,7 +576,6 @@
     app.controller("chuyenCtrl", function ($scope, $http) {
         $scope.onGetAllChuyen = function () {
             $http.get(localHost + "/api/chuyen/get-all").then(function (res) {
-                console.log(res)
                 $scope.danhSachChuyen = res.data?.Data;
                 $scope.allDanhSachChuyen = res.data?.Data;
             })
@@ -509,7 +585,6 @@
 
         $scope.onGetAllTuyen = function () {
             $http.get(localHost + "/api/tuyen/get-all").then(function (res) {
-                console.log(res)
                 $scope.danhSachTuyen = res.data?.Data;
                 $scope.danhSachTuyenEdit = res.data?.Data;
             })
@@ -562,7 +637,6 @@
                 "GioKhoiHanh": $scope.gioKhoiHanh + ":" + phutConvert
             }
 
-            console.log(model);
             $http.post(localHost + "/api/chuyen/them-chuyen", model).then(function (res) {
                 if (!res.data?.Status) {
                     $scope.isErrorTuyen = true;
@@ -727,26 +801,18 @@
             "MaGaDen": 0
         }
 
-        $scope.onChangeFilterGaDi = function (gaDiFilterSelected) {
-            $scope.variableFilterGa.MaGaDi = gaDiFilterSelected;
-            if (gaDiFilterSelected != 0) {
-                $scope.danhSachChuyen = $scope.allDanhSachChuyen.filter(x => x.MaGaDi == gaDiFilterSelected);
+        $scope.onChangeFilterGa = function () {
+            console.log($scope.gaDiFilterSelected)
+            console.log($scope.gaDenFilterSelected)
+            $scope.danhSachChuyen = $scope.allDanhSachChuyen;
+            if ($scope.gaDiFilterSelected != 0) {
+                $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDi == $scope.gaDiFilterSelected);
             }
-            if ($scope.variableFilterGa.MaGaDen != 0) {
-                $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDen == $scope.variableFilterGa.MaGaDen);
+
+            if ($scope.gaDenFilterSelected != 0) {
+                $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDen == $scope.gaDenFilterSelected);
             }
         }
-
-        $scope.onChangeFilterGaDen = function (gaDenFilterSelected) {
-            $scope.variableFilterGa.MaGaDen = gaDenFilterSelected;
-            if (gaDenFilterSelected != 0) {
-                $scope.danhSachChuyen = $scope.allDanhSachChuyen.filter(x => x.MaGaDen == gaDenFilterSelected);
-            }
-            if ($scope.variableFilterGa.MaGaDi != 0) {
-                $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDi == $scope.variableFilterGa.MaGaDi);
-            }
-        }
-
     })
 
     app.controller("toaCtrl", function ($scope, $http) {
@@ -754,15 +820,25 @@
             $http.get(localHost + "/api/toa/get-all").then(function (res) {
                 console.log(res.data?.Data);
                 $scope.danhSachToa = res.data?.Data;
+                $scope.allDanhSachToa = res.data?.Data;
+                $scope.onChangeFilterTau();
             })
         }
 
         $scope.onGetAllToa();
 
+        $scope.onChangeFilterTau = function () {
+            $scope.danhSachToa = $scope.allDanhSachToa;
+            if ($scope.tauFilterSelect != 0) {
+                $scope.danhSachToa = $scope.danhSachToa.filter(x => x.MaTau == $scope.tauFilterSelect);
+            }
+        }
+
         $scope.onGetAllTau = function () {
             $http.get(localHost + "/api/tau/get-all").then(function (res) {
                 console.log(res.data?.Data)
                 $scope.danhSachNewTau = res.data?.Data;
+                $scope.danhSachTauFilter = res.data?.Data;
             })
         }
 
@@ -817,7 +893,7 @@
             })
         }
 
-        $scope.onChangeNewTau = function(){
+        $scope.onChangeNewTau = function () {
             $scope.clearErrorMessageThemToa();
         }
 
@@ -851,8 +927,7 @@
         $scope.onXoaToa = function (toa) {
             $http.post(localHost + "/api/toa/xoa-toa" + "?id=" + toa.MaToa).then(function (res) {
                 if (!res.data?.Status) {
-                    $scope.isErrorNewTenToa = true;
-                    $scope.errorMessageNewTenToa = res.data?.Message;
+                    alert(res.data?.Message)
                     return;
                 }
 
@@ -866,7 +941,6 @@
         $scope.listSuaGa = []
 
         $scope.onShowSuaToa = function (toa) {
-            console.log(toa)
             $scope.listSuaGa.push(toa.MaToa)
             $scope.editTau = toa.MaTau;
             $scope.editTenToa = toa.TenToa;
@@ -887,12 +961,11 @@
             $scope.errorMessageEditTenToa = "";
         }
 
-        $scope.onChangeEditTau = function(){
+        $scope.onChangeEditTau = function () {
             $scope.clearErrorEditToa();
         }
 
-        $scope.onLuuToa = function(toa){
-            console.log("Ten toa: " + $scope.editTenToa)
+        $scope.onLuuToa = function (toa) {
             var issError = false;
             if (!$scope.valueSoLuongGhe || $scope.valueSoLuongGhe <= 0) {
                 $scope.isErrorEditSoLuongGhe = true;
@@ -916,33 +989,231 @@
                 "SoLuongGhe": $scope.valueSoLuongGhe
             }
 
-            console.log(model);
+            $http.post(localHost + "/api/toa/sua-toa", model).then(function (res) {
+                if (!res.data?.Status) {
+                    alert(res.data?.Message)
+                    return;
+                }
+
+                alert(res.data?.Message)
+
+                $scope.onGetAllToa();
+                $scope.clearErrorEditToa();
+                var index = $scope.listSuaGa.indexOf(toa.MaToa)
+                $scope.listSuaGa.splice(index, 1);
+
+            })
+        }
+
+        $scope.onChangeEditLoaiToa = function (loaiToa) {
+            $scope.valueLoaiToa = loaiToa;
             $scope.clearErrorEditToa();
         }
 
-        $scope.onChangeEditLoaiToa = function(loaiToa){
-            $scope.valueLoaiToa = loaiToa;
-             $scope.clearErrorEditToa();
-        }
-
-        $scope.onChangeEditSoLuongGhe = function(soLuongGhe){
+        $scope.onChangeEditSoLuongGhe = function (soLuongGhe) {
             $scope.valueSoLuongGhe = soLuongGhe;
-             $scope.clearErrorEditToa();
+            $scope.clearErrorEditToa();
         }
 
-        $scope.onChangeEditTau = function(maTau){
+        $scope.onChangeEditTau = function (maTau) {
             $scope.valueMaTau = maTau;
-             $scope.clearErrorEditToa();
+            $scope.clearErrorEditToa();
         }
 
-        $scope.onChangeEditTenToa = function(tenToa){
+        $scope.onChangeEditTenToa = function (tenToa) {
             $scope.valueTenToa = tenToa;
             $scope.clearErrorEditToa();
         }
 
-        $scope.onHuyEditToa = function(toa){
+        $scope.onHuyEditToa = function (toa) {
             var index = $scope.listSuaGa.indexOf(toa.MaToa)
             $scope.listSuaGa.splice(index, 1);
+        }
+    })
+
+    app.controller("chuyenTauCtrl", function ($scope, $http, $filter) {
+
+        $scope.ngayKhoiHanhSelected = $filter('date')($scope.ngayKhoiHanhSelected, "dd-MM-yyyy")
+
+        $scope.getAllChuyenTau = function () {
+            $http.get(localHost + "/api/chuyentau/get-all").then(function (res) {
+                console.log("allChuyenTau")
+                console.log(res.data?.Data)
+                $scope.danhSachChuyenTau = res.data?.Data;
+            })
+        }
+
+        $scope.getAllChuyenTau();
+
+        $scope.onGetAllTau = function () {
+            $http.get(localHost + "/api/tau/get-all").then(function (res) {
+                $scope.danhSachTau = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllTau();
+
+        $scope.onGetAllChuyen = function () {
+            $http.get(localHost + "/api/chuyen/get-all").then(function (res) {
+                console.log("AllChuyen: ")
+                console.log(res)
+                $scope.danhSachChuyen = res.data?.Data;
+            })
+        }
+
+        $scope.onGetAllChuyen();
+
+        $scope.onShowThemChuyenTau = function () {
+            $scope.isShowThemChuyenTau = true;
+        }
+
+        $scope.onHuyShowThemChuyenTau = function () {
+            $scope.isShowThemChuyenTau = false;
+            $scope.tauMoiSelected = "";
+            $scope.chuyenMoiSelected = "";
+            $scope.ngayKhoiHanhSelected = "";
+            $scope.veNgoiSelected = "";
+            $scope.veNamSelected = "";
+            $scope.clearThemChuyenTau();
+        }
+
+        $scope.onThemChuyenTau = function () {
+
+            var dateFormat = new Date($scope.ngayKhoiHanhSelected);
+            var date = dateFormat.getDate();
+            var month = dateFormat.getMonth() + 1;
+            var year = dateFormat.getFullYear();
+
+            var convertDate = year + "-" + month + "-" + date;
+
+            var model = {
+                "MaTau": $scope.tauMoiSelected,
+                "MaChuyen": $scope.chuyenMoiSelected,
+                "NgayKhoiHanh": convertDate,
+                "VeNgoi": $scope.veNgoiSelected,
+                "VeNam": $scope.veNamSelected
+            };
+
+            console.log(model);
+
+            if (!model.MaTau || !model.MaChuyen || !model.VeNgoi || !model.VeNam) {
+                $scope.errorThemChuyenTau = "Vui lòng không để trống";
+                return;
+            }
+
+            if (!$scope.ngayKhoiHanhSelected) {
+                $scope.errorThemChuyenTau = "Vui lòng chọn ngày khởi hành";
+                return;
+            }
+
+            var currentDate = new Date();
+            var hours = (($scope.ngayKhoiHanhSelected - currentDate) / 1000) / 3600;
+
+            if (hours < 160) {
+                $scope.errorThemChuyenTau = "Ngày khởi hành phải lớn hơn 7 ngày tính từ hết ngày hôm nay";
+                return;
+            }
+
+            if (isNaN(model.VeNgoi) || isNaN(model.VeNam) || Number(model.VeNgoi) <= 0 || Number(model.VeNam) <= 0) {
+                $scope.errorThemChuyenTau = "Giá vé không hợp lệ";
+                return;
+            }
+
+            $scope.errorThemChuyenTau = "";
+            $http.post(localHost + "/api/chuyentau/them-chuyen-tau", model).then(function (res) {
+                if (!res.data?.Status) {
+                    $scope.errorThemChuyenTau = res.data?.Message;
+                    return;
+                }
+
+                alert(res.data?.Message);
+                $scope.onHuyShowThemChuyenTau();
+                $scope.getAllChuyenTau();
+            })
+        }
+
+        $scope.clearThemChuyenTau = function () {
+            $scope.errorThemChuyenTau = "";
+        }
+
+        $scope.onXoaChuyenTau = function (chuyenTau) {
+            console.log(chuyenTau);
+            var isXacNhan = confirm("Xác nhận xóa chuyến tàu");
+            if (isXacNhan) {
+                $http.post(localHost + "/api/chuyentau/xoa-chuyen-tau/" + chuyenTau.MaChuyenTau).then(function (res) {
+                    console.log(res);
+                    alert(res.data?.Message);
+                    if (!res.data?.Status) {
+                        return;
+                    }
+                    $scope.getAllChuyenTau();
+                })
+            }
+        }
+
+
+        $scope.onKhoiHanh = function (chuyenTau) {
+            console.log(chuyenTau)
+            var currentDate = new Date();
+            var ngayKhoiHanh = new Date(chuyenTau.NgayKhoiHanh);
+
+            var date1 = currentDate.getDate();
+            var month1 = currentDate.getMonth() + 1;
+            var year1 = currentDate.getFullYear();
+
+            var date = ngayKhoiHanh.getDate();
+            var month = ngayKhoiHanh.getMonth() + 1;
+            var year = ngayKhoiHanh.getFullYear();
+
+            if (year1 < year) {
+                alert("Chưa đến giờ khởi hành")
+            }
+            else if (month1 < month) {
+                alert("Chưa đến giờ khởi hành")
+            }
+            else if (date1 < date) {
+                alert("Chưa đến giờ khởi hành")
+            }
+
+            var model = {
+                "MaChuyenTau": chuyenTau.MaChuyenTau,
+                "TrangThai": 1
+            }
+            console.log(model);
+            var isXacNhan = confirm("Xác nhận khởi hành");
+            if (isXacNhan) {
+                $http.post(localHost + "/api/chuyentau/cap-nhat-trang-thai", model).then(function (res) {
+                    if(!res.data?.Status){
+                        alert(res.data?.Message)
+                        return;
+                    }
+
+                    alert("Khởi hành thành công");
+                    $scope.getAllChuyenTau();
+                })
+            }
+
+
+        }
+    
+        $scope.onHoanThanh = function(chuyenTau){
+            var model = {
+                "MaChuyenTau": chuyenTau.MaChuyenTau,
+                "TrangThai": 3
+            }
+            console.log(model);
+            var isXacNhan = confirm("Xác nhận hoàn thành");
+            if (isXacNhan) {
+                $http.post(localHost + "/api/chuyentau/cap-nhat-trang-thai", model).then(function (res) {
+                    if(!res.data?.Status){
+                        alert(res.data?.Message)
+                        return;
+                    }
+
+                    alert("Chuyến tàu đã hoàn thành");
+                    $scope.getAllChuyenTau();
+                })
+            }
         }
     })
 </script>

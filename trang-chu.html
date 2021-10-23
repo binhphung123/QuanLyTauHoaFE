@@ -219,10 +219,10 @@
     var app = angular.module('trangChu', ["ngRoute"]);
     app.config(function ($routeProvider) {
         $routeProvider
-            .when("/", {
-                templateUrl: "Tim-Ve/tim-ve.html",
-                controller: "trangTimTuyenCtrl"
-            })
+            // .when("/", {
+            //     templateUrl: "Tim-Ve/tim-ve.html",
+            //     controller: "trangTimTuyenCtrl"
+            // })
             .when("/tim-ve", {
                 templateUrl: "Tim-Ve/tim-ve.html",
                 controller: "trangTimTuyenCtrl"
@@ -293,17 +293,20 @@
             // data.MaGaDi = 2;
             // data.MaGaDen = 3;
             // data.NgayKhoiHanh = '10/18/2021'
-
+            $scope.danhSachChuyenTauVuaTim = null;
             $http.post(localHost + "/api/tuyen/tim-tuyen", data).then(function (response) {
                 if (!response.data?.Status) {
                     $scope.isEmptyData = true;
                     $scope.message = response.data.Message;
+                    $scope.errorTimChuyenTau = response.data?.Message;
                 }
                 else {
+                    $scope.clearAll();
                     $scope.isEmptyData = false;
                     $scope.message = "";
                     $scope.isStation = true;
                     $scope.danhSachChuyenTauVuaTim = response.data?.Data;
+                    $scope.errorTimChuyenTau = "";
                     // $scope.data.forEach(o=>o.ID=+o.ID)
                 }
             });
@@ -335,7 +338,11 @@
         }
 
         $scope.onSelectToa = function (toa) {
-            $http.get(localHost + "/api/toa/get-ghe-by-toa/" + toa.MaToa).then(function (res) {
+            var model = {
+                "MaToa": toa.MaToa,
+                "MaChuyenTau": $scope.maChuyenTauSeleceted
+            }
+            $http.post(localHost + "/api/toa/get-ghe-by-toa", model).then(function (res) {
                 if (!res.data?.Status) {
                     alert(res.data?.Message + ". Vui lòng load lại trang");
                     return;
@@ -368,12 +375,12 @@
                 var indexMaGhe = $scope.listMaGheChon.indexOf(ghe.MaGhe);
                 var indexGheRemove = -1;
                 $scope.listThongTinDatVe.forEach((element, index) => {
-                    if(element.Ghe.MaGhe == ghe.MaGhe){
+                    if (element.Ghe.MaGhe == ghe.MaGhe) {
                         indexGheRemove = index;
                     }
                 });
 
-              
+
                 $scope.listMaGheChon.splice(gheIndex, 1)
                 $scope.listThongTinDatVe.splice(indexGheRemove, 1)
                 $scope.checkSoLuongVeBeHon6();
@@ -428,21 +435,20 @@
 
                 listGheDat.push(newGheDat);
             })
-            if(!$scope.thanhToanTrucTiep && (!$scope.inputCMND || !$scope.inputMaBaoMat))
-            {
+            if (!$scope.thanhToanTrucTiep && (!$scope.inputCMND || !$scope.inputMaBaoMat)) {
                 $scope.errorThanhToan = "Vui lòng nhập thông tin ngân hàng"
                 return;
             }
-            else{
+            else {
                 $scope.errorThanhToan = ""
             }
 
-            if($scope.listThongTinDatVe.length <= 0){
+            if ($scope.listThongTinDatVe.length <= 0) {
                 alert("Vui lòng chọn ghế trước khi thanh toán")
                 return;
             }
 
-            if(isError){
+            if (isError) {
                 return;
             }
 
@@ -456,11 +462,11 @@
             }
 
             console.log(model)
-          
 
-            $http.post(localHost + "/api/ve/dat-ve", model).then(function(res){
+
+            $http.post(localHost + "/api/ve/dat-ve", model).then(function (res) {
                 console.log(res);
-                if(!res.data?.Status){
+                if (!res.data?.Status) {
                     $scope.errorThanhToan = res.data?.Message
                     return;
                 }
@@ -513,11 +519,11 @@
         $scope.onHuyChonGhe = function (ghe) {
             var gheIndex = $scope.listMaGheChon.indexOf(ghe.MaGhe);
             var indexGheRemove = -1;
-                $scope.listThongTinDatVe.forEach((element, index) => {
-                    if(element.Ghe.MaGhe == ghe.MaGhe){
-                        indexGheRemove = index;
-                    }
-                });
+            $scope.listThongTinDatVe.forEach((element, index) => {
+                if (element.Ghe.MaGhe == ghe.MaGhe) {
+                    indexGheRemove = index;
+                }
+            });
             var indexItem = $scope.listThongTinDatVe.indexOf(ghe)
             $scope.listMaGheChon.splice(gheIndex, 1)
             $scope.listThongTinDatVe.splice(indexGheRemove, 1)
@@ -529,11 +535,29 @@
             $scope.checkSoLuongVeBeHon6();
         }
 
-        $scope.onSelectPhuongThucTT = function(){
-            if($scope.thanhToanTrucTiep){
+        $scope.onSelectPhuongThucTT = function () {
+            if ($scope.thanhToanTrucTiep) {
                 $scope.inputCMND = "";
                 $scope.inputMaBaoMat = "";
             }
+        }
+
+        $scope.clearAll = function () {
+            $scope.danhSachChuyenTauVuaTim = null;
+            $scope.listThongTinDatVe = [];
+            $scope.listMaGheChon = [];
+            $scope.isDatVeThanhCong = false;
+            $scope.isSelecetedChuyenTau = false;
+            $scope.thanhToanTrucTiep = true;
+            $scope.inputCMND = "";
+            $scope.inputMaBaoMat = "";
+            $scope.loaiVeCaNhan = true;
+            $scope.danhSachVeThanhCong = [];
+            $scope.danhSachGheDay0 = [];
+            $scope.danhSachGheDay1 = [];
+            $scope.danhSachGheDay2 = [];
+            $scope.danhSachGheDay3 = [];
+
         }
     });
 

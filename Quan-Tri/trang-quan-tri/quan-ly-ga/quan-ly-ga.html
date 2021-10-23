@@ -61,8 +61,8 @@
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">{{ga.TenGa}}</td>
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">{{ga.TenThanhPhoTinh}}</td>
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1" style="text-align: right;">
-                                    <button class="btn btn-primary" ng-click="editGa(ga)">Sửa</button>
-                                    <button class="btn btn-danger" ng-click="xoaGa(ga)">Xóa</button>
+                                    <button ng-show="{{!ga.NotAllowEdit}}" class="btn btn-primary" ng-click="editGa(ga)">Sửa</button>
+                                    <button ng-show="{{!ga.NotAllowEdit}}" class="btn btn-danger" ng-click="xoaGa(ga)">Xóa</button>
                                 </td>
                             </div>
                             

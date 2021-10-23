@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 .trang-quan-tri {
     background-color: #fafafa;
     .quan-tri-menu {
@@ -18,6 +21,52 @@
                     text-decoration: none;
                     color: white;
                 }
+            }
+        }
+    }
+    .trang-quan-tri-dashboard {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .trang-quan-tri-dashboard-item {
+            width: 25%;
+            padding: 20px;
+            margin: 10px;
+            background-color: white;
+            // display: flex;
+            // align-items: center;
+            // justify-content: space-around;
+            i {
+                font-size: 18px;
+                padding: 26px;
+                color: white;
+                border-radius: 50%;
+            }
+            .trang-quan-tri-dashboard-item-text{
+                padding: 10px 12px;
+                span{
+                    font-weight: bold;
+                }
+            }
+        }
+        .trang-quan-tri-dashboard-item1 {
+            i{
+                background: #7547ff;
+            }
+        }
+        .trang-quan-tri-dashboard-item2 {
+            i{
+                background: #ff2667;
+            }
+        }
+        .trang-quan-tri-dashboard-item3 {
+            i{
+                background: #3693fd;
+            }
+        }
+        .trang-quan-tri-dashboard-item4 {
+            i{
+                background: #25c73a;
             }
         }
     }
