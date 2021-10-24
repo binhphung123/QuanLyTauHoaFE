@@ -12,6 +12,33 @@
     <div class="quan-ly-chuyen-tau">
         <h2>Quản lý chuyến tàu</h2>
         <hr />
+        <span>Tên tàu: </span>
+        <select ng-model="tauFilterSelect" ng-init="tauFilterSelect = '0'" style="width: 150px;" ng-change="onFilterChuyenTau()">
+            <option value="0">Tất cả tàu</option>
+            <option ng-repeat="tau in danhSachTau | orderBy: 'TenTau'" value="{{tau.MaTau}}" ng-selected="tauFilterSelect == tau.MaTau">
+                {{tau.TenTau}}
+            </option>
+        </select>
+
+        <span>Ga đi: </span>
+        <select ng-model="gaDiFilterSelect" ng-init="gaDiFilterSelect = '0'" style="width: 150px;" ng-change="onFilterChuyenTau()">
+            <option value="0">Tất cả ga</option>
+            <option ng-repeat="ga in danhSachGa | orderBy: 'TenGa'" value="{{ga.MaGa}}" ng-selected="gaDiFilterSelect == ga.MaGa">
+                {{ga.TenGa}}
+            </option>
+        </select>
+
+        <span>Ga đến: </span>
+        <select ng-model="gaDenFilterSelect" ng-init="gaDenFilterSelect = '0'" style="width: 150px;" ng-change="onFilterChuyenTau()">
+            <option value="0">Tất cả ga</option>
+            <option ng-repeat="ga in danhSachGa | orderBy: 'TenGa'"  value="{{ga.MaGa}}" ng-selected="gaDenFilterSelect == ga.MaGa">
+                {{ga.TenGa}}
+            </option>
+        </select>
+        
+        <span>Ngày khởi hành: </span>
+        <input type="date" ng-model="ngayKhoiHanhFilter" ng-change="onFilterChuyenTau()">
+
         <button class="btn btn-primary mb-3" ng-click="onShowThemChuyenTau()">Thêm chuyến tàu</button>
         <table class="table text-center">
             <thead class="text-white bg-dark">

@@ -19,13 +19,17 @@
 
 <body class="trang-quan-tri">
     <div ng-app="trangQuanTri" ng-controller="trangQuanTriCrtl">
-        <div class="row container-fluid">
+        <div class="row container-fluid" style="background-color: #233242;">
             <div class="col-md-2">
                 <div class="quan-tri-menu">
                     <ul class="list-group">
                         <li class="list-group-item quan-tri-menu-item">
                             <i class="fas fa-users-cog"></i>
                             <span class="quan-tri-menu-item-title">Quản trị</h1>
+                        </li>
+                        <li class="list-group-item quan-tri-menu-item">
+                            <i class="fas fa-subway"></i>
+                            <a href="#/!">Quản lý thống kê </a>
                         </li>
                         <li class="list-group-item quan-tri-menu-item">
                             <i class="fas fa-subway"></i>
@@ -54,7 +58,7 @@
                     </ul>
                 </div>
             </div>
-            <div class="col-md-10">
+            <div class="col-md-10" style="background-color: white;">
                 <div class="trang-quan-tri-dashboard">
                     <div class="trang-quan-tri-dashboard-item trang-quan-tri-dashboard-item1">
                         <div class="row">
@@ -154,6 +158,10 @@
             .when("/quan-ly-ve-tau", {
                 templateUrl: "quan-ly-ve-tau/quan-ly-ve-tau.html",
                 controller: "veTauCtrl"
+            })
+            .when("/", {
+                templateUrl: "quan-ly-thong-ke/quan-ly-thong-ke.html",
+                controller: "thongKeCtrl"
             })
             ;
 
@@ -385,6 +393,7 @@
                 console.log("Tuyen")
                 console.log(res);
                 $scope.danhSachTuyen = res.data.Data;
+                $scope.allDanhSachTuyen = res.data?.Data;
             });
         }
 
@@ -578,6 +587,19 @@
                 $scope.onGetAllTuyen();
                 alert(res.data.Message)
             })
+        }
+    
+        $scope.onFilterChuyenTau = function(){
+            var gaDi = $scope.gaDiFilterSelect;
+            var gaDen = $scope.gaDenFilterSelect;
+            $scope.danhSachTuyen = $scope.allDanhSachTuyen;
+            if (gaDi != 0) {
+                $scope.danhSachTuyen = $scope.danhSachTuyen.filter(x => x.MaGaDi == gaDi);
+            }
+
+            if (gaDen != 0) {
+                $scope.danhSachTuyen = $scope.danhSachTuyen.filter(x => x.MaGaDen == gaDen);
+            }
         }
     })
 
@@ -1048,6 +1070,7 @@
                 console.log("allChuyenTau")
                 console.log(res.data?.Data)
                 $scope.danhSachChuyenTau = res.data?.Data;
+                $scope.allDanhSachChuyenTau = res.data?.Data;
             })
         }
 
@@ -1223,6 +1246,53 @@
                 })
             }
         }
+
+        $scope.onGetAllGa = function () {
+            $http.get(localHost + "/api/ga/get-all").then(function (res) {
+                if (res.data?.Status) {
+                    console.log(res.data?.Data);
+                    $scope.danhSachGa = res.data?.Data;
+                }
+            });
+        }
+
+        $scope.onGetAllGa();
+
+        $scope.onFilterChuyenTau = function () {
+            var maTau = $scope.tauFilterSelect;
+            var gaDi = $scope.gaDiFilterSelect;
+            var gaDen = $scope.gaDenFilterSelect;
+            var ngayKhoiHanh = new Date($scope.ngayKhoiHanhFilter);
+            var date = ngayKhoiHanh.getDate();
+            var month = ngayKhoiHanh.getMonth() + 1;
+            var year = ngayKhoiHanh.getFullYear();
+            console.log("tauFilterSelect: " + maTau)
+            console.log("gaDiFilterSelect: " + gaDi)
+            console.log("gaDenFilterSelect: " + gaDen)
+            console.log("ngayKhoiHanhFilter: " + ngayKhoiHanh)
+            console.log("ngayKhoiHanhFilter: " + date + "/" + month + "/" + year)
+            var ngayConvert = date + "/" + month + "/" + year;
+            $scope.danhSachChuyenTau = $scope.allDanhSachChuyenTau;
+
+            if (maTau != 0) {
+                $scope.danhSachChuyenTau = $scope.danhSachChuyenTau.filter(x => x.MaTau == maTau);
+            }
+
+            if (gaDi != 0) {
+                $scope.danhSachChuyenTau = $scope.danhSachChuyenTau.filter(x => x.MaGaDi == gaDi);
+            }
+
+            if (gaDen != 0) {
+                $scope.danhSachChuyenTau = $scope.danhSachChuyenTau.filter(x => x.MaGaDen == gaDen);
+            }
+
+            if (ngayKhoiHanh != "Invalid Date" && ngayConvert != "1/1/1970") {
+
+                $scope.danhSachChuyenTau = $scope.danhSachChuyenTau.filter(x => new Date(x.NgayKhoiHanh).getFullYear() == year
+                    && new Date(x.NgayKhoiHanh).getMonth() + 1 == month
+                    && new Date(x.NgayKhoiHanh).getDate() == date);
+            }
+        }
     })
 
     app.controller("veTauCtrl", function ($scope, $http) {
@@ -1389,6 +1459,17 @@
 
     });
 
+    app.controller("thongKeCtrl", function($scope, $http){
+        var redColor = "red";
+        $scope.myStyle = {'background-color':'' + redColor};
+
+        $scope.danhSachThang = [];
+        for(var i = 1; i <= 12; i++){
+            $scope.danhSachThang.push(i);
+        }
+
+        console.log($scope.danhSachThang)
+    })
 </script>
 
 </html>

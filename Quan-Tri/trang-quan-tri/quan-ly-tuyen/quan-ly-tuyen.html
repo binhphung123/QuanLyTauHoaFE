@@ -13,6 +13,24 @@
         <h2>Danh sách tuyến</h2>
         <hr />
         <div class="m-3">
+            <span>Ga đi: </span>
+            <select ng-model="gaDiFilterSelect" ng-init="gaDiFilterSelect = '0'" style="width: 150px;"
+                ng-change="onFilterChuyenTau()">
+                <option value="0">Tất cả ga</option>
+                <option ng-repeat="ga in danhSachGa | orderBy: 'TenGa'" value="{{ga.MaGa}}"
+                    ng-selected="gaDiFilterSelect == ga.MaGa">
+                    {{ga.TenGa}}
+                </option>
+            </select>
+            <span>Ga đến: </span>
+            <select ng-model="gaDenFilterSelect" ng-init="gaDenFilterSelect = '0'" style="width: 150px;"
+                ng-change="onFilterChuyenTau()">
+                <option value="0">Tất cả ga</option>
+                <option ng-repeat="ga in danhSachGa | orderBy: 'TenGa'" value="{{ga.MaGa}}"
+                    ng-selected="gaDenFilterSelect == ga.MaGa">
+                    {{ga.TenGa}}
+                </option>
+            </select>
             <button class="btn btn-primary mb-3" ng-click="onShowThemTuyen()">Thêm tuyến</button>
             <table class="table">
                 <thead class="bg-dark text-white">
@@ -70,13 +88,16 @@
                             {{tuyen.TenGaChaDen}}
                         </td>
                         <td ng-show="listEditTuyen.indexOf(tuyen.MaTuyen) == -1" style="text-align: right;">
-                            <button ng-show="{{!tuyen.NotAllowEdit}}" class="btn btn-primary" ng-click="onClickSua(tuyen)">Sửa</button>
-                            <button ng-show="{{!tuyen.NotAllowEdit}}" class="btn btn-danger" ng-click="onXoaTuyen(tuyen)">Xóa</button>
+                            <button ng-show="{{!tuyen.NotAllowEdit}}" class="btn btn-primary"
+                                ng-click="onClickSua(tuyen)">Sửa</button>
+                            <button ng-show="{{!tuyen.NotAllowEdit}}" class="btn btn-danger"
+                                ng-click="onXoaTuyen(tuyen)">Xóa</button>
                         </td>
 
                         <td ng-show="listEditTuyen.indexOf(tuyen.MaTuyen) != -1">{{tuyen.MaTuyen}}</td>
                         <td ng-show="listEditTuyen.indexOf(tuyen.MaTuyen) != -1">
-                            <select ng-model="gaDiEditSelected" class="form-control" ng-change="onChangeEditGaDi(gaDiEditSelected)">
+                            <select ng-model="gaDiEditSelected" class="form-control"
+                                ng-change="onChangeEditGaDi(gaDiEditSelected)">
                                 <option ng-repeat="ga in danhSachGaEdit" ng-selected="gaDiEditSelected == ga.MaGa"
                                     value="{{ga.MaGa}}">
                                     {{ga.TenGa}}
@@ -85,7 +106,8 @@
                             <span ng-show="isErrorGaDi" class="text-danger">{{errorMessageGaDi}}</span>
                         </td>
                         <td ng-show="listEditTuyen.indexOf(tuyen.MaTuyen) != -1">
-                            <select ng-model="gaDenEditSelected" class="form-control" ng-change="onChangeEditGaDen(gaDenEditSelected)">
+                            <select ng-model="gaDenEditSelected" class="form-control"
+                                ng-change="onChangeEditGaDen(gaDenEditSelected)">
                                 <option ng-repeat="ga in danhSachGaEdit" ng-selected="gaDenEditSelected == ga.MaGa"
                                     value="{{ga.MaGa}}">
                                     {{ga.TenGa}}
@@ -94,9 +116,10 @@
                             <span ng-show="isErrorGaDen" class="text-danger">{{errorMessageGaDen}}</span>
                         </td>
                         <td ng-show="listEditTuyen.indexOf(tuyen.MaTuyen) != -1">
-                            <select ng-model="tuyenChaSeleceted" class="form-control" ng-change="onChangeTuyenCha(tuyenChaSeleceted)">
-                                <option ng-repeat="tuyen in danhSachTuyen" ng-selected="tuyenChaSeleceted == tuyen.MaTuyen" 
-                                    value="{{tuyen.MaTuyen}}">
+                            <select ng-model="tuyenChaSeleceted" class="form-control"
+                                ng-change="onChangeTuyenCha(tuyenChaSeleceted)">
+                                <option ng-repeat="tuyen in danhSachTuyen"
+                                    ng-selected="tuyenChaSeleceted == tuyen.MaTuyen" value="{{tuyen.MaTuyen}}">
                                     {{tuyen.MaTuyen}}
                                 </option>
                             </select>
@@ -106,7 +129,7 @@
                             <button class="btn btn-success" ng-click="onClickLuu(tuyen)">Lưu</button>
                             <button class="btn btn-danger" ng-click="onHuyEdit(tuyen)">Hủy</button>
                         </td>
-                     
+
                     </tr>
                 </tbody>
             </table>
