@@ -10,6 +10,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular-route.js"></script>
     <link rel="stylesheet" href="trang-quan-tri.css">
     <link rel="stylesheet" href="./quan-ly-chuyen-tau/quan-ly-chuyen-tau.css">
+    <link rel="stylesheet" href="./quan-ly-thong-ke/quan-ly-thong-ke.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
         integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta2/css/all.min.css"
@@ -19,7 +20,7 @@
 
 <body class="trang-quan-tri">
     <div ng-app="trangQuanTri" ng-controller="trangQuanTriCrtl">
-        <div class="row container-fluid" style="background-color: #233242;">
+        <div class="row container-fluid">
             <div class="col-md-2">
                 <div class="quan-tri-menu">
                     <ul class="list-group">
@@ -59,6 +60,18 @@
                 </div>
             </div>
             <div class="col-md-10" style="background-color: white;">
+                <div class="trang-quan-tri-tai-khoan">
+                    <span class="text-danger">
+                        Nhân viên:
+                        <b>
+                            {{taiKhoan}}
+                        </b>
+                    </span>
+                    <span class="ml-1 trang-quan-tri-tai-khoan-sign-out" ng-click="onSightOut()">
+                        <i class="fas fa-sign-out-alt"></i>
+                    </span>
+                </div>
+
                 <div class="trang-quan-tri-dashboard">
                     <div class="trang-quan-tri-dashboard-item trang-quan-tri-dashboard-item1">
                         <div class="row">
@@ -172,6 +185,9 @@
         if (!taiKhoan) {
             $window.location.href = '../quan-tri.html';
         }
+        else {
+            $scope.taiKhoan = taiKhoan;
+        }
 
         $scope.getInfoDashBoard = function () {
             $http.get(localHost + "/api/nhanvien/dashboard").then(function (res) {
@@ -181,6 +197,14 @@
         }
 
         $scope.getInfoDashBoard();
+
+        $scope.onSightOut = function () {
+            var taiKhoan = localStorage.getItem("taikhoan");
+            if (taiKhoan) {
+                localStorage.removeItem("taikhoan");
+                $window.location.href = '../quan-tri.html';
+            }
+        }
     })
 
     app.controller("gaCtrl", function ($scope, $http, $filter) {
@@ -588,8 +612,8 @@
                 alert(res.data.Message)
             })
         }
-    
-        $scope.onFilterChuyenTau = function(){
+
+        $scope.onFilterChuyenTau = function () {
             var gaDi = $scope.gaDiFilterSelect;
             var gaDen = $scope.gaDenFilterSelect;
             $scope.danhSachTuyen = $scope.allDanhSachTuyen;
@@ -1198,12 +1222,15 @@
 
             if (year1 < year) {
                 alert("Chưa đến giờ khởi hành")
+                return;
             }
             else if (month1 < month) {
                 alert("Chưa đến giờ khởi hành")
+                return;
             }
             else if (date1 < date) {
                 alert("Chưa đến giờ khởi hành")
+                return;
             }
 
             var model = {
@@ -1459,16 +1486,54 @@
 
     });
 
-    app.controller("thongKeCtrl", function($scope, $http){
-        var redColor = "red";
-        $scope.myStyle = {'background-color':'' + redColor};
+    app.controller("thongKeCtrl", function ($scope, $http) {
+        $scope.namSelect = new Date().getFullYear;
 
         $scope.danhSachThang = [];
-        for(var i = 1; i <= 12; i++){
+        for (var i = 1; i <= 12; i++) {
             $scope.danhSachThang.push(i);
         }
 
-        console.log($scope.danhSachThang)
+        $scope.danhSachNam = []
+        for (var i = 2015; i <= 2025; i++) {
+            $scope.danhSachNam.push(i);
+        }
+
+        $scope.isHasDoanhThu = false;
+        $scope.onChangeNam = function (nam) {
+            console.log(nam)
+            $http.get(localHost + "/api/nhanvien/thong-ke/" + nam).then(function (res) {
+                var defaultMax = 250;
+                $scope.dsThang = res.data?.Data;
+                var lstThang = res.data?.Data;
+
+                var thangMax = lstThang.filter(x => x.IsMax);
+
+                if (thangMax.length > 0) {
+                    $scope.isHasDoanhThu = true;
+                    for (var i = 0; i < $scope.dsThang.length; i++) {
+                        var thang = $scope.dsThang[i];
+                        if (thang.IsMax) {
+                            $scope["thangStyle" + i] = { 'height': '' + defaultMax + "px" };
+                            $scope["doanhThuStyle" + i] = { 'height': '' + (defaultMax + 20) + "px" };
+                        }
+                        else {
+                            var tyLe = thang.DoanhThu / thangMax[0].DoanhThu;
+                            $scope["thangStyle" + i] = { 'height': '' + (defaultMax * tyLe) + "px" };
+                            $scope["doanhThuStyle" + i] = { 'height': '' + ((defaultMax * tyLe) + 20) + "px" };
+                        }
+                    }
+                }
+                else {
+                    $scope.isHasDoanhThu = false;
+                }
+
+            })
+        }
+
+        $scope.onChangeNam(2021)
+
+
     })
 </script>
 

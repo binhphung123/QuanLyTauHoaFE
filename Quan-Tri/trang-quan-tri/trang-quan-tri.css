@@ -83,4 +83,19 @@
 .trang-quan-tri .trang-quan-tri-dashboard .trang-quan-tri-dashboard-item4 i {
   background: #25c73a;
 }
+
+.trang-quan-tri .trang-quan-tri-tai-khoan {
+  text-align: right;
+}
+
+.trang-quan-tri .trang-quan-tri-tai-khoan .trang-quan-tri-tai-khoan-sign-out {
+  cursor: pointer;
+  -webkit-transition: all .3s;
+  transition: all .3s;
+  color: #5f8ef7;
+}
+
+.trang-quan-tri .trang-quan-tri-tai-khoan .trang-quan-tri-tai-khoan-sign-out:hover {
+  color: #0b3ca7;
+}
 /*# sourceMappingURL=trang-quan-tri.css.map */

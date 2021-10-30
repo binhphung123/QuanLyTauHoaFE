@@ -250,26 +250,33 @@
     app.controller('trangTimTuyenCtrl', function ($scope, $http, $filter) {
         $http.get(localHost + "/api/ve/get-danh-sach-ga").then(function (response) {
             $scope.myRouteData = response.data.Data;
-            $scope.chonTenGa = function (ga) {
-                console.log(ga);
-                $scope.isInvalidStation = false;
-                if ($scope.isChonGaDi) {
-                    // if ($scope.layTenGaDi == $scope.layTenGaDen) {
-                    //     $scope.isInvalidStation = true;
-                    // }
-                    $scope.layTenGaDi = ga.TenGa;
-                    $scope.maGaDiDaChon = ga.MaGa;
-                }
-                else {
-                    // if ($scope.layTenGaDen == $scope.layTenGaDi) {
-                    //     $scope.isInvalidStation = true;
-                    // }
-                    $scope.layTenGaDen = ga.TenGa;
-                    $scope.maGaDenDaChon = ga.MaGa;
-                }
-            }
-
         });
+
+        $scope.chonTenGa = function (ga) {
+            console.log(ga);
+            $scope.isInvalidStation = false;
+            if ($scope.isChonGaDi) {
+                // if ($scope.layTenGaDi == $scope.layTenGaDen) {
+                //     $scope.isInvalidStation = true;
+                // }
+                $scope.layTenGaDi = ga.TenGa;
+                $scope.maGaDiDaChon = ga.MaGa;
+                $scope.chonGaDen();
+            }
+            else {
+                // if ($scope.layTenGaDen == $scope.layTenGaDi) {
+                //     $scope.isInvalidStation = true;
+                // }
+                $scope.layTenGaDen = ga.TenGa;
+                $scope.maGaDenDaChon = ga.MaGa;
+                $scope.chonGaDi();
+            }
+        }
+
+        $scope.onPressKey = function (e) {
+            e.preventDefault();
+            return;
+        }
 
         $scope.isChonGaDi = true;
         $scope.chonGaDi = function () {
@@ -335,6 +342,8 @@
         $scope.onSelectChuyenTau = function (chuyenTau) {
             $scope.isSelecetedChuyenTau = true;
             $scope.danhSachToa = chuyenTau.Toas;
+
+            console.log(chuyenTau)
 
             $scope.chuyenTauSelectedModel = chuyenTau;
             $scope.maChuyenTauSeleceted = chuyenTau.MaChuyenTau;
@@ -506,6 +515,12 @@
 
         $scope.onChangeInfo = function () {
             $scope.clearErrror();
+        }
+
+        $scope.onKeyPress = function(e){
+            if(isNaN(e.key) && e.key != "Backspace" && e.key != "Tab"){
+                e.preventDefault();
+            }
         }
 
         $scope.loaiVeCaNhan = true;

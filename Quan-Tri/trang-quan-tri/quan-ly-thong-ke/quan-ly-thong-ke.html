@@ -1,19 +1,46 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
+
 <body>
-    <h2>Thống kê</h2>
-    <span ng-style="myStyle">ABC</span>
-    <ul>
-        Tháng 
-        <li style="display: inline;" class="ml-5" ng-repeat="thang in danhSachThang">
-            {{thang}}
-        </li>
-    </ul>
+    <div class="thong-ke">
+        <h2>Thống kê</h2>
+        <span>
+            Doanh thu theo năm:
+        </span>
+
+        <select ng-model="namSelect" ng-init="namSelect = '2021'" ng-change="onChangeNam(namSelect)">
+            <option ng-repeat="nam in danhSachNam" style="width: 120px" ng-selected="namSelect == nam" value="{{nam}}">
+                {{nam}}
+            </option>
+        </select>
+
+        <h4 ng-show="!isHasDoanhThu" class="text-success">Năm này chưa có doanh thu</h4>
+
+        <div style="height: 300px;"></div>
+
+        <ul ng-show="isHasDoanhThu">
+            Tháng
+            <li style="display: inline;" class="ml-5" ng-repeat="thang in dsThang">
+                <span class="thong-ke-item">
+                    <span class="thong-ke-item-cot" ng-style="thangStyle{{thangStyle + $index}}"></span>
+                    <span ng-show="{{thang.DoanhThu > 0}}" class="thong-ke-item-doanh-thu"
+                        ng-style="doanhThuStyle{{thangStyle + $index}}">
+                        {{thang.DoanhThu | number}}
+                    </span>
+                    {{thang.Thang}}
+                </span>
+            </li>
+        </ul>
+
+    </div>
+
 </body>
+
 </html>

@@ -1,0 +1,18 @@
+.thong-ke .thong-ke-item {
+  position: relative;
+}
+
+.thong-ke .thong-ke-item .thong-ke-item-cot {
+  position: absolute;
+  width: 25px;
+  left: -6px;
+  bottom: 20px;
+  background: #0ea7f1;
+}
+
+.thong-ke .thong-ke-item .thong-ke-item-doanh-thu {
+  position: absolute;
+  left: -25px;
+  bottom: 20px;
+}
+/*# sourceMappingURL=quan-ly-thong-ke.css.map */

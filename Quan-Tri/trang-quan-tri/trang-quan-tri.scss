@@ -70,4 +70,15 @@
             }
         }
     }
+    .trang-quan-tri-tai-khoan{
+        text-align: right;
+        .trang-quan-tri-tai-khoan-sign-out{
+            cursor: pointer;
+            transition: all .3s;
+            color: #5f8ef7;
+            &:hover{
+                color: #0b3ca7;
+            }
+        }
+    }
 }

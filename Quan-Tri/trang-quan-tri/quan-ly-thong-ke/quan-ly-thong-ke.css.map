@@ -1,0 +1,9 @@
+{
+    "version": 3,
+    "mappings": "AAAA,AACI,SADK,CACL,cAAc,CAAC;EACX,QAAQ,EAAE,QAAQ;CAcrB;;AAhBL,AAGQ,SAHC,CACL,cAAc,CAEV,kBAAkB,CAAC;EACf,QAAQ,EAAE,QAAQ;EAClB,KAAK,EAAE,IAAI;EACX,IAAI,EAAE,IAAI;EACV,MAAM,EAAE,IAAI;EACZ,UAAU,EAAE,OAAO;CACtB;;AATT,AAWQ,SAXC,CACL,cAAc,CAUV,wBAAwB,CAAA;EACpB,QAAQ,EAAE,QAAQ;EAClB,IAAI,EAAE,KAAK;EACX,MAAM,EAAE,IAAI;CACf",
+    "sources": [
+        "quan-ly-thong-ke.scss"
+    ],
+    "names": [],
+    "file": "quan-ly-thong-ke.css"
+}
