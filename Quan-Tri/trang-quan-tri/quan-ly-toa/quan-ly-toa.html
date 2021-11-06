@@ -12,7 +12,7 @@
     <h2>Quản lý toa</h2>
     <hr />
     <span>Lọc toa theo tàu: </span>
-    <select ng-model="tauFilterSelect" ng-init="tauFilterSelect = '0'" ng-change="onChangeFilterTau()">
+    <select ng-model="tauFilterSelect" ng-init="tauFilterSelect = '0'" ng-change="onChangeFilterTau()" style="width: 120px;">
         <option value="0">Tất cả tàu</option>
         <option ng-repeat="tau in danhSachTauFilter" value="{{tau.MaTau}}" ng-selected="tauFilterSelect == tau.MaTau">
             {{tau.TenTau}}
