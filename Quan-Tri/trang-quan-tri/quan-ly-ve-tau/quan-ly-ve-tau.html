@@ -13,7 +13,7 @@
     <hr />
     <div class="m-3">
         <span>Tìm kiếm thông tin khách: </span>
-        <input type="text" class="mr-4" style="width: 15%;" ng-model="searchInfoVe" ng-change="onChangeFilterVeTau()">
+        <input type="text" class="mr-4" style="width: 15%;" ng-model="searchInfoVe" ng-change="onChangeFilterVeTau()" placeholder="Họ tên/CMND/SĐT">
 
         <span>Ngày bán vé: </span>
         <select class="mr-3" ng-model="ngayFilterSelected" ng-init="ngayFilterSelected = '0'"
@@ -99,7 +99,7 @@
                     <td class="border border-2">
                         <button ng-show="veTau.TrangThai == 1" class="btn btn-success" ng-click="onTraVe(veTau)">Trả
                             vé</button>
-                        <button ng-show="veTau.TrangThai == 1 && veTau.LoaiVe != 2" class="btn btn-danger"
+                        <button ng-show="veTau.TrangThai == 1 && veTau.TrangThaiVe != 2" class="btn btn-danger"
                             ng-click="onDoiVe(veTau)">Đổi vé</button>
                         <button ng-show="veTau.TrangThai == 2" class="btn btn-success"
                             ng-click="onThanhToan(veTau)">Thanh toán</button>
@@ -110,14 +110,13 @@
             </tbody>
         </table>
         <div>
-            <ul>
+            <ul class="float-right">
                 <li style="display: inline;" ng-repeat="soTrang in danhSachTrang">
                     <button class="btn btn-primary" ng-click="onSelectTrang(soTrang)">
                         {{soTrang}}
                     </button>
                 </li>
             </ul>
-
         </div>
     </div>
 </body>

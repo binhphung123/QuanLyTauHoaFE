@@ -57,7 +57,7 @@ body {
   border-right: none;
 }
 
-#menu_header nav ul#main_menu :hover a {
+#menu_header nav ul#main_menu .bg-active:hover {
   background-color: #0f6bb4;
 }
 
@@ -229,6 +229,14 @@ body {
 
 .bg-gray {
   background-color: #e6e6e6;
+}
+
+.cursor-not-allowed {
+  cursor: not-allowed;
+}
+
+.active {
+  background: #0f6bb4;
 }
 
 #content {

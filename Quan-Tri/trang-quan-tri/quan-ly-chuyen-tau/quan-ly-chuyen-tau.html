@@ -42,32 +42,35 @@
                                 <span class="input-group-text" id="basic-addon1" style="width: 150px;">Chuyến: </span>
                             </div>
                             <select ng-model="chuyenMoiSelected" track by $index class="form-control">
-                                <option ng-repeat="chuyen in danhSachChuyen | orderBy: 'TimeOrderBy'" value="{{chuyen.MaChuyen}}"
-                                    ng-selected="chuyenMoiSelected == chuyen.MaChuyen">
+                                <option ng-repeat="chuyen in danhSachChuyen | orderBy: 'TimeOrderBy'"
+                                    value="{{chuyen.MaChuyen}}" ng-selected="chuyenMoiSelected == chuyen.MaChuyen">
                                     {{chuyen.TenGaDi}} -> {{chuyen.TenGaDen}} {{chuyen.GioKhoiHanh}}
                                 </option>
                             </select>
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1" style="width: 150px;">Ngày khởi hành: </span>
+                                <span class="input-group-text" id="basic-addon1" style="width: 150px;">Ngày khởi
+                                    hành: </span>
                             </div>
-                            <input type="date" ng-model="ngayKhoiHanhSelected" class="form-control"/>
+                            <input type="date" ng-model="ngayKhoiHanhSelected" class="form-control" />
                         </div>
-                        <p class="text-danger" style="text-align: left;" ng-show="errorThemChuyenTau">{{errorThemChuyenTau}}</p>
+                        <p class="text-danger" style="text-align: left;" ng-show="errorThemChuyenTau">
+                            {{errorThemChuyenTau}}</p>
                     </td>
                     <td style="width: 400px; vertical-align: middle;">
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
-                                <span class="input-group-text" id="basic-addon1" style="width: 100px;">Vé ngồi: </span>
+                                <span class="input-group-text" id="basic-addon1" style="width: 100px;">Vé ngồi:
+                                </span>
                             </div>
-                            <input type="text" ng-model="veNgoiSelected" class="form-control"/>
+                            <input type="text" ng-model="veNgoiSelected" class="form-control" />
                         </div>
                         <div class="input-group mb-3">
                             <div class="input-group-prepend">
                                 <span class="input-group-text" id="basic-addon1" style="width: 100px;">Vé nằm: </span>
                             </div>
-                            <input type="text" ng-model="veNamSelected" class="form-control"/>
+                            <input type="text" ng-model="veNamSelected" class="form-control" />
                         </div>
                     </td>
                     <td>
@@ -99,14 +102,29 @@
                         {{chuyenTau.SoGheDaDat}} / {{chuyenTau.TongSoLuongGhe}}
                     </td>
                     <td>
-                        <span class="text-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 3">Đã Hoàn thành</span>
-                        <button class="btn btn-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 2" ng-click="onKhoiHanh(chuyenTau)">Khởi hành</button>
-                        <button class="btn btn-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 1" ng-click="onHoanThanh(chuyenTau)">Hoàn thành</button>
-                        <button class="btn btn-danger" ng-show="chuyenTau.SoGheDaDat <= 0" ng-click="onXoaChuyenTau(chuyenTau)">Xóa</button>
+                        <span class="text-success" ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 3">Đã
+                            Hoàn thành</span>
+                        <button class="btn btn-success"
+                            ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 2"
+                            ng-click="onKhoiHanh(chuyenTau)">Khởi hành</button>
+                        <button class="btn btn-success"
+                            ng-show="chuyenTau.SoGheDaDat > 0 && chuyenTau.TrangThaiTau == 1"
+                            ng-click="onHoanThanh(chuyenTau)">Hoàn thành</button>
+                        <button class="btn btn-danger" ng-show="chuyenTau.SoGheDaDat <= 0"
+                            ng-click="onXoaChuyenTau(chuyenTau)">Xóa</button>
                     </td>
                 </tr>
             </tbody>
         </table>
+        <div>
+            <ul class="float-right">
+                <li style="display: inline;" ng-repeat="soTrang in danhSachTrang">
+                    <button class="btn btn-primary" ng-click="onSelectTrang(soTrang)">
+                        {{soTrang}}
+                    </button>
+                </li>
+            </ul>
+        </div>
     </div>
 </body>
 

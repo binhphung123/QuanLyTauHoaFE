@@ -85,6 +85,15 @@
                         </tr>
                     </tbody>
                 </table>
+                <div>
+                    <ul class="float-right">
+                        <li style="display: inline;" ng-repeat="soTrang in danhSachTrang">
+                            <button class="btn btn-primary" ng-click="onSelectTrang(soTrang)">
+                                {{soTrang}}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

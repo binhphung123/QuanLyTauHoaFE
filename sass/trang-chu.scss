@@ -1,16 +1,14 @@
-// Trang chủ
-
-// Trang tìm vé
-// *{
-//     padding: 0;
-//     margin: 0;
-// }
+// ====================Tổng quát=============================
 
 body {
     font-family: Verdana, Geneva, Tahoma, sans-serif;
     font-size: 16px;
     line-height: 1.5;
 }
+
+// ====================END Tổng quát=============================
+
+// ====================Trang chủ=============================
 
 #fpt_logo {
     padding-top: 20px;
@@ -49,18 +47,14 @@ body {
             :last-child {
                 border-right: none;
             }
-            :hover {
-                a {
+            .bg-active:hover{
                     background-color: #0f6bb4;
-                }
             }
         }
     }
 }
 
 .content_ticket_search {
-    // padding-left: 15px;
-    // padding-right: 15px;
     .body_ticket_search {
         background-color: #d9edf7;
         border: 1px solid #bce8f1;
@@ -122,8 +116,6 @@ body {
 }
 
 #content_rule {
-    // padding-left: 15px;
-    // padding-right: 15px;
     margin-top: 20px;
     margin-bottom: 20px;
     .rule {
@@ -147,8 +139,6 @@ body {
 }
 
 #address {
-    // padding-left: 15px;
-    // padding-right: 15px;
     margin-bottom: 30px;
     display: block;
     .body_address {
@@ -215,7 +205,18 @@ body {
     background-color: #e6e6e6;
 }
 
-//Trang chủ view:
+.cursor-not-allowed{
+    cursor: not-allowed;
+}
+
+.active{
+    background: #0f6bb4;
+}
+
+// ====================END Trang chủ=============================
+
+// ====================Trang chủ view=============================
+
 #content {
     display: flex;
     .sidebar_left {
@@ -351,17 +352,22 @@ body {
     }
 }
 
-// Trang đặt vé
+// ====================END Trang chủ view=============================
+
+// ====================Trang đặt vé=============================
+
 .gender {
     width: 20%;
     padding: 6px;
 }
 
-//Trang đăng nhập khách hàng
+// ====================END Trang đặt vé=============================
+
+//Trang đăng nhập khách hàng (chưa sử dụng)
+
 #wp_form_login {
     background-image: url("/images/background-login.jpg");
     background-size: cover;
-    // background-position-y: -250px;
     min-height: 450px;
     display: flex;
     justify-content: center;
