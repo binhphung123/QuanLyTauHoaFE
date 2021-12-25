@@ -36,7 +36,8 @@
         </select>
 
         <span>Năm bán vé: </span>
-        <select class="mr-4" ng-model="namFilterSelected" ng-init="namFilterSelected = '0'" ng-change="onChangeFilterVeTau()">
+        <select class="mr-4" ng-model="namFilterSelected" ng-init="namFilterSelected = '0'"
+            ng-change="onChangeFilterVeTau()">
             <option value="0">Tất cả</option>
             <option ng-repeat="nam in namSearch | orderBy: 'nam'" value="{{namSearch[$index]}}"
                 ng-selected="namFilterSelected == namSearch[$index]">
@@ -45,7 +46,8 @@
         </select>
 
         <span>Trạng thái: </span>
-        <select ng-model="trangThaiFilterSelected" ng-init="trangThaiFilterSelected = '0'" ng-change="onChangeFilterVeTau()">
+        <select ng-model="trangThaiFilterSelected" ng-init="trangThaiFilterSelected = '0'"
+            ng-change="onChangeFilterVeTau()">
             <option value="0">Tất cả</option>
             <option value="1">Đã thanh toán</option>
             <option value="2">Chưa thanh toán</option>
@@ -110,14 +112,13 @@
             </tbody>
         </table>
         <div>
-            <ul>
+            <ul class="float-right">
                 <li style="display: inline;" ng-repeat="soTrang in danhSachTrang">
                     <button class="btn btn-primary" ng-click="onSelectTrang(soTrang)">
                         {{soTrang}}
                     </button>
                 </li>
             </ul>
-
         </div>
     </div>
 </body>

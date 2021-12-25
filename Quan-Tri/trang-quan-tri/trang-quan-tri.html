@@ -231,6 +231,7 @@
             }
         });
 
+        $scope.isFullGa = false;
         $scope.onChangeTinhThanhPho = function () {
             console.log($scope.tinhSelected)
             if ($scope.tinhSelected == 0) {
@@ -239,6 +240,17 @@
             else {
                 $scope.danhSachGa = $scope.tatCaGa.filter(x => x.MaThanhPhoTinh == $scope.tinhSelected);
             }
+
+            $scope.phanTrang($scope.danhSachGa.length);
+
+            if ($scope.danhSachGa.length == $scope.tatCaGa.length) {
+                $scope.isFullGa = true;
+            }
+            else {
+                $scope.isFullGa = false;
+            }
+            $scope.danhSachGaTam = $scope.danhSachGa;
+            $scope.onSelectTrang(1);
         }
 
         //Thêm ga
@@ -397,6 +409,43 @@
                 alert(res.data?.Message);
             })
         }
+
+        $scope.phanTrang = function (tongPhanTu) {
+            var tongSoTrang = tongPhanTu / 10;
+            console.log("Tong pt:" + tongPhanTu);
+            if (tongPhanTu > 10 && tongPhanTu % 10 != 0) {
+                tongSoTrang += 1;
+            }
+            $scope.danhSachTrang = [];
+            if (tongSoTrang > 1) {
+                for (var i = 1; i <= tongSoTrang; i++) {
+                    $scope.danhSachTrang.push(i);
+                }
+            }
+
+
+            console.log($scope.danhSachTrang)
+        }
+
+        $scope.onSelectTrang = function (soTrang) {
+            $scope.trangSelected = soTrang;
+            $scope.danhSachGaPaging = [];
+            $scope.trangSelected = soTrang;
+            var soPhanTuTrenTrang = 10;
+            if ($scope.isFullGa) {
+                $scope.danhSachGa = $scope.tatCaGa;
+            }
+            else {
+                $scope.danhSachGa = $scope.danhSachGaTam;
+            }
+            for (var i = (soTrang - 1) * soPhanTuTrenTrang; i < soTrang * soPhanTuTrenTrang; i++) {
+                if ($scope.danhSachGa[i]) {
+                    $scope.danhSachGaPaging.push($scope.danhSachGa[i]);
+                }
+            }
+
+            $scope.danhSachGa = $scope.danhSachGaPaging;
+        }
     });
 
     app.controller("tuyenCtrl", function ($scope, $http) {
@@ -417,7 +466,9 @@
                 console.log("Tuyen")
                 console.log(res);
                 $scope.danhSachTuyen = res.data.Data;
-                $scope.allDanhSachTuyen = res.data?.Data;
+                $scope.allDanhSachTuyen = res.data.Data;
+                var tongPT = $scope.danhSachTuyen.length;
+                // $scope.onFilterTuyen();
             });
         }
 
@@ -613,6 +664,45 @@
             })
         }
 
+        $scope.phanTrang = function (tongPhanTu) {
+            var tongSoTrang = tongPhanTu / 10;
+            console.log("Tong pt:" + tongPhanTu);
+            if (tongPhanTu > 10 && tongPhanTu % 10 != 0) {
+                tongSoTrang += 1;
+            }
+            $scope.danhSachTrang = [];
+            if (tongSoTrang > 1) {
+                for (var i = 1; i <= tongSoTrang; i++) {
+                    $scope.danhSachTrang.push(i);
+                }
+            }
+
+            console.log($scope.danhSachTrang)
+        }
+
+
+        $scope.onSelectTrang = function (soTrang) {
+            $scope.trangSelected = soTrang;
+            $scope.danhSachTuyenPaging = [];
+            $scope.trangSelected = soTrang;
+            var soPhanTuTrenTrang = 10;
+            console.log($scope.isFullTuyen)
+            if ($scope.isFullTuyen) {
+                $scope.danhSachTuyen = $scope.allDanhSachTuyen;
+            }
+            else {
+                $scope.danhSachTuyen = $scope.danhSachTuyenTam;
+            }
+            console.log($scope.danhSachTuyen)
+            for (var i = (soTrang - 1) * soPhanTuTrenTrang; i < soTrang * soPhanTuTrenTrang; i++) {
+                if ($scope.danhSachTuyen[i]) {
+                    $scope.danhSachTuyenPaging.push($scope.danhSachTuyen[i]);
+                }
+            }
+
+            $scope.danhSachTuyen = $scope.danhSachTuyenPaging;
+        }
+
         $scope.onFilterChuyenTau = function () {
             var gaDi = $scope.gaDiFilterSelect;
             var gaDen = $scope.gaDenFilterSelect;
@@ -624,7 +714,20 @@
             if (gaDen != 0) {
                 $scope.danhSachTuyen = $scope.danhSachTuyen.filter(x => x.MaGaDen == gaDen);
             }
+
+            // $scope.phanTrang($scope.danhSachTuyen.length);
+
+            if ($scope.danhSachTuyen.length == $scope.allDanhSachTuyen.length) {
+                $scope.isFullTuyen = true;
+            }
+            else {
+                $scope.isFullTuyen = false;
+            }
+            $scope.danhSachTuyenTam = $scope.danhSachTuyen;
+            // $scope.onSelectTrang(1);
         }
+
+        
     })
 
     app.controller("chuyenCtrl", function ($scope, $http) {
@@ -632,6 +735,7 @@
             $http.get(localHost + "/api/chuyen/get-all").then(function (res) {
                 $scope.danhSachChuyen = res.data?.Data;
                 $scope.allDanhSachChuyen = res.data?.Data;
+                $scope.onChangeFilterGa()
             })
         }
 
@@ -855,6 +959,7 @@
             "MaGaDen": 0
         }
 
+        $scope.isFullChuyen = false;
         $scope.onChangeFilterGa = function () {
             console.log($scope.gaDiFilterSelected)
             console.log($scope.gaDenFilterSelected)
@@ -866,6 +971,55 @@
             if ($scope.gaDenFilterSelected != 0) {
                 $scope.danhSachChuyen = $scope.danhSachChuyen.filter(x => x.MaGaDen == $scope.gaDenFilterSelected);
             }
+
+            $scope.phanTrang($scope.danhSachChuyen.length);
+
+            if ($scope.danhSachChuyen.length == $scope.allDanhSachChuyen.length) {
+                $scope.isFullChuyen = true;
+            }
+            else {
+                $scope.isFullChuyen = false;
+            }
+            $scope.danhSachChuyenTam = $scope.danhSachChuyen;
+            $scope.onSelectTrang(1);
+        }
+
+        $scope.phanTrang = function (tongPhanTu) {
+            var tongSoTrang = tongPhanTu / 10;
+            console.log("Tong pt:" + tongPhanTu);
+            if (tongPhanTu > 10 && tongPhanTu % 10 != 0) {
+                tongSoTrang += 1;
+            }
+            $scope.danhSachTrang = [];
+            if (tongSoTrang > 1) {
+                for (var i = 1; i <= tongSoTrang; i++) {
+                    $scope.danhSachTrang.push(i);
+                }
+            }
+
+
+            console.log($scope.danhSachTrang)
+        }
+
+
+        $scope.onSelectTrang = function (soTrang) {
+            $scope.trangSelected = soTrang;
+            $scope.danhSachChuyenPaging = [];
+            $scope.trangSelected = soTrang;
+            var soPhanTuTrenTrang = 10;
+            if ($scope.isFullChuyen) {
+                $scope.danhSachChuyen = $scope.allDanhSachChuyen;
+            }
+            else {
+                $scope.danhSachChuyen = $scope.danhSachChuyenTam;
+            }
+            for (var i = (soTrang - 1) * soPhanTuTrenTrang; i < soTrang * soPhanTuTrenTrang; i++) {
+                if ($scope.danhSachChuyen[i]) {
+                    $scope.danhSachChuyenPaging.push($scope.danhSachChuyen[i]);
+                }
+            }
+
+            $scope.danhSachChuyen = $scope.danhSachChuyenPaging;
         }
     })
 
@@ -881,11 +1035,23 @@
 
         $scope.onGetAllToa();
 
+        $scope.isFullToaTau = false;
         $scope.onChangeFilterTau = function () {
             $scope.danhSachToa = $scope.allDanhSachToa;
             if ($scope.tauFilterSelect != 0) {
                 $scope.danhSachToa = $scope.danhSachToa.filter(x => x.MaTau == $scope.tauFilterSelect);
             }
+
+            $scope.phanTrang($scope.danhSachToa.length);
+
+            if ($scope.danhSachToa.length == $scope.allDanhSachToa.length) {
+                $scope.isFullToaTau = true;
+            }
+            else {
+                $scope.isFullToaTau = false;
+            }
+            $scope.danhSachToaTam = $scope.danhSachToa;
+            $scope.onSelectTrang(1);
         }
 
         $scope.onGetAllTau = function () {
@@ -1083,6 +1249,44 @@
             var index = $scope.listSuaGa.indexOf(toa.MaToa)
             $scope.listSuaGa.splice(index, 1);
         }
+
+        $scope.phanTrang = function (tongPhanTu) {
+            var tongSoTrang = tongPhanTu / 10;
+            console.log("Tong pt:" + tongPhanTu);
+            if (tongPhanTu > 10 && tongPhanTu % 10 != 0) {
+                tongSoTrang += 1;
+            }
+            $scope.danhSachTrang = [];
+            if (tongSoTrang > 1) {
+                for (var i = 1; i <= tongSoTrang; i++) {
+                    $scope.danhSachTrang.push(i);
+                }
+            }
+
+
+            console.log($scope.danhSachTrang)
+        }
+
+
+        $scope.onSelectTrang = function (soTrang) {
+            $scope.trangSelected = soTrang;
+            $scope.danhSachToaPaging = [];
+            $scope.trangSelected = soTrang;
+            var soPhanTuTrenTrang = 10;
+            if ($scope.isFullToaTau) {
+                $scope.danhSachToa = $scope.allDanhSachToa;
+            }
+            else {
+                $scope.danhSachToa = $scope.danhSachToaTam;
+            }
+            for (var i = (soTrang - 1) * soPhanTuTrenTrang; i < soTrang * soPhanTuTrenTrang; i++) {
+                if ($scope.danhSachToa[i]) {
+                    $scope.danhSachToaPaging.push($scope.danhSachToa[i]);
+                }
+            }
+
+            $scope.danhSachToa = $scope.danhSachToaPaging;
+        }
     })
 
     app.controller("chuyenTauCtrl", function ($scope, $http, $filter) {
@@ -1095,6 +1299,14 @@
                 console.log(res.data?.Data)
                 $scope.danhSachChuyenTau = res.data?.Data;
                 $scope.allDanhSachChuyenTau = res.data?.Data;
+                var tongPT = $scope.danhSachChuyenTau.length;
+                $scope.phanTrang(tongPT);
+                if (!$scope.soTrangSelect) {
+                    $scope.onSelectTrang(1)
+                }
+                else {
+                    $scope.soTrangSelect($scope.soTrangSelect);
+                }
             })
         }
 
@@ -1272,6 +1484,42 @@
                     $scope.getAllChuyenTau();
                 })
             }
+        }
+
+        $scope.phanTrang = function (tongPhanTu) {
+            var tongSoTrang = tongPhanTu / 10;
+            console.log("Tong pt:" + tongPhanTu);
+            if (tongPhanTu > 10 && tongPhanTu % 10 != 0) {
+                tongSoTrang += 1;
+            }
+            $scope.danhSachTrang = [];
+            if (tongSoTrang > 1) {
+                for (var i = 1; i <= tongSoTrang; i++) {
+                    $scope.danhSachTrang.push(i);
+                }
+            }
+
+
+            console.log($scope.danhSachTrang)
+        }
+
+        $scope.onSelectTrang = function (soTrang) {
+            $scope.trangSelected = soTrang;
+            $scope.danhSachChuyenTauPaging = [];
+            $scope.trangSelected = soTrang;
+            var soPhanTuTrenTrang = 10;
+
+            $scope.soTrangSelect = soTrang;
+
+            $scope.danhSachChuyenTau = $scope.allDanhSachChuyenTau;
+
+            for (var i = (soTrang - 1) * soPhanTuTrenTrang; i < soTrang * soPhanTuTrenTrang; i++) {
+                if ($scope.danhSachChuyenTau[i]) {
+                    $scope.danhSachChuyenTauPaging.push($scope.danhSachChuyenTau[i]);
+                }
+            }
+
+            $scope.danhSachChuyenTau = $scope.danhSachChuyenTauPaging;
         }
 
         $scope.onGetAllGa = function () {

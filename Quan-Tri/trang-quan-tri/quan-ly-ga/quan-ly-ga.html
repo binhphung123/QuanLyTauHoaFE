@@ -43,8 +43,10 @@
                                 </div>
                             </td>
                             <td>
-                                <select ng-model="newTinhSelected" class="form-control" ng-change="onChangeNewTinhThanhPho()">
-                                    <option ng-repeat="tinh in newDanhSachTinhTP" ng-selected="newTinhSelected == tinh.MaTinhThanhPho"
+                                <select ng-model="newTinhSelected" class="form-control"
+                                    ng-change="onChangeNewTinhThanhPho()">
+                                    <option ng-repeat="tinh in newDanhSachTinhTP"
+                                        ng-selected="newTinhSelected == tinh.MaTinhThanhPho"
                                         value="{{tinh.MaTinhThanhPho}}">
                                         {{tinh.TenTinhThanhPho}}
                                     </option>
@@ -57,34 +59,49 @@
                             </td>
                         </tr>
                         <tr ng-repeat="ga in danhSachGa | orderBy: 'TenGa'" track by $index>
-                           <div ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">
+                            <div ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">{{ga.TenGa}}</td>
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1">{{ga.TenThanhPhoTinh}}</td>
                                 <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) == -1" style="text-align: right;">
-                                    <button ng-show="{{!ga.NotAllowEdit}}" class="btn btn-primary" ng-click="editGa(ga)">Sửa</button>
-                                    <button ng-show="{{!ga.NotAllowEdit}}" class="btn btn-danger" ng-click="xoaGa(ga)">Xóa</button>
+                                    <button ng-show="{{!ga.NotAllowEdit}}" class="btn btn-primary"
+                                        ng-click="editGa(ga)">Sửa</button>
+                                    <button ng-show="{{!ga.NotAllowEdit}}" class="btn btn-danger"
+                                        ng-click="xoaGa(ga)">Xóa</button>
                                 </td>
                             </div>
-                            
+
                             <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) !== -1">
-                                <input type="text" class="form-control" ng-model="tenGaEdit" ng-change="onChangeEditTenGa(tenGaEdit)"/>
+                                <input type="text" class="form-control" ng-model="tenGaEdit"
+                                    ng-change="onChangeEditTenGa(tenGaEdit)" />
                                 <span class="text-danger" ng-show="!tenGaEdit">Vui lòng không để trống</span>
                             </td>
                             <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) !== -1">
-                                <select ng-model="editTinhSelected" class="form-control" ng-change="onChangeEditTinhThanhPho(editTinhSelected)">
-                                    <option ng-repeat="tinh in editDanhSachTinhTP" ng-selected="editTinhSelected == tinh.MaTinhThanhPho"
+                                <select ng-model="editTinhSelected" class="form-control"
+                                    ng-change="onChangeEditTinhThanhPho(editTinhSelected)">
+                                    <option ng-repeat="tinh in editDanhSachTinhTP"
+                                        ng-selected="editTinhSelected == tinh.MaTinhThanhPho"
                                         value="{{tinh.MaTinhThanhPho}}">
                                         {{tinh.TenTinhThanhPho}}
                                     </option>
                                 </select>
                             </td>
                             <td ng-show="danhSachGaEdit.indexOf(ga.MaGa) !== -1" style="text-align: right;">
-                                <button class="btn btn-success" ng-disabled="!tenGaEdit" ng-click="onLuuGa(ga)">Lưu</button>
+                                <button class="btn btn-success" ng-disabled="!tenGaEdit"
+                                    ng-click="onLuuGa(ga)">Lưu</button>
                                 <button class="btn btn-danger" ng-click="onHuyGaEdit(ga)">Hủy</button>
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <div>
+                    <ul class="float-right">
+                        <li style="display: inline;" ng-repeat="soTrang in danhSachTrang">
+                            <button class="btn btn-primary" ng-click="onSelectTrang(soTrang)">
+                                {{soTrang}}
+                            </button>
+                        </li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>

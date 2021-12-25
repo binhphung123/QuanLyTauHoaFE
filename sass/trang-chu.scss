@@ -49,10 +49,8 @@ body {
             :last-child {
                 border-right: none;
             }
-            :hover {
-                a {
-                    background-color: #0f6bb4;
-                }
+            .bg-active:hover {
+                background-color: #0f6bb4;
             }
         }
     }
@@ -215,6 +213,14 @@ body {
     background-color: #e6e6e6;
 }
 
+.cursor-not-allowed{
+    cursor: not-allowed;
+}
+
+.active{
+    background: #0f6bb4;
+}
+
 //Trang chủ view:
 #content {
     display: flex;
@@ -345,7 +351,7 @@ body {
                 }
             }
         }
-        .connect_us:last-child{
+        .connect_us:last-child {
             margin-bottom: 0;
         }
     }
